@@ -93,3 +93,18 @@ router.get('/edit/:id', async (req, res) => {
     }
     });
 module.exports = router;
+
+// Delete user
+router.post('/delete/:id', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const usersCollection = db.collection('users');
+        
+        await usersCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.redirect('/users/list');
+    } catch (err) {
+        console.error("Error deleting user:", err);
+        res.send("Something went wrong.");
+    }
+});
