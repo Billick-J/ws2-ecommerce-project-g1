@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,8 +30,8 @@ async function main() {
         const database = client.db("ecommerceDB");
 
         // Start server
-        app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}`);
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
         });
 
     } catch (err) {
