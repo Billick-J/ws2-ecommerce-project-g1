@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 
         // 3. Create verification token
         const token = uuidv4();
-        
+
          // Base URL: local (http://localhost:3000) or deployed (https://yourapp.onrender.com)
         const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
         const verificationUrl = `${baseUrl}/users/verify/${token}`;
@@ -252,10 +252,15 @@ router.get('/admin', async (req, res) => {
 });
 
 
-// Logout
+// Logout route
 router.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/users/login');
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            return res.send("Something went wrong during logout.");
+        }
+        res.redirect('/users/login');
+    });
 });
 
 module.exports = router;
