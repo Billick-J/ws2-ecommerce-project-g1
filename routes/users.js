@@ -4,6 +4,8 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
@@ -23,7 +25,7 @@ router.post('/register', async (req, res) => {
     try {
         const db = req.app.locals.client.db(req.app.locals.dbName);
         const usersCollection = db.collection('users');
-
+        
         // 1. Check if user already exists by email
         const existingUser = await usersCollection.findOne({ email: req.body.email });
         if (existingUser) return res.send("User already exists with this email.");
@@ -34,6 +36,10 @@ router.post('/register', async (req, res) => {
 
         // 3. Create verification token
         const token = uuidv4();
+        
+         // Base URL: local (http://localhost:3000) or deployed (https://yourapp.onrender.com)
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        const verificationUrl = `${baseUrl}/users/verify/${token}`;
 
         // 4. Build new user object
         const newUser = {
@@ -59,7 +65,20 @@ router.post('/register', async (req, res) => {
             <h2>Registration Successful!</h2>
             <p>Please verify your account before logging in.</p>
             <p><a href="/users/verify/${token}">Click here to verify</a></p>
+            
         `);
+        // Send verification email using Resend
+        await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL, // stored in .env
+        to: newUser.email,
+        subject: 'Verify your account',
+        html: `
+        <h2>Welcome, ${newUser.firstName}!</h2>
+        <p>Thank you for registering. Please verify your email by clicking the link
+        below:</p>
+        <a href="${verificationUrl}">${verificationUrl}</a>
+        `});
+
     } catch (err) {
         console.error("Error saving user:", err);
         res.send("Something went wrong.");
