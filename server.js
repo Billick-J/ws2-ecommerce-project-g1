@@ -27,10 +27,14 @@ app.use(session({
 }));
 
 //Routes
-const indexRoute = require('./routes/index')
+const indexRoute = require('./routes/index');
 const usersRoute = require('./routes/users');
+const passwordRoute = require('./routes/password'); // ✅ add this
+
 app.use('/', indexRoute);
 app.use('/users', usersRoute);
+app.use('/password', passwordRoute); // ✅ mount password routes
+
 
 // MongoDB Setup
 const uri = process.env.MONGO_URI;
