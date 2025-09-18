@@ -1,3 +1,7 @@
+<% if (message) { %>
+    <p style="color: red;"><%= message %></p>
+<% } %>
+
 <form action="/users/login" method="POST">
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
@@ -7,4 +11,5 @@
 
     <button type="submit">Login</button>
 </form>
+
 <p>Don’t have an account? <a href="/users/register">Register here</a></p>

@@ -186,7 +186,15 @@ router.post('/delete/:id', async (req, res) => {
 
 // Show login form
 router.get('/login', (req, res) => {
-    res.render('login', { title: "Login" });
+    let message = null;
+
+    if (req.query.message === 'logout') {
+        message = "You have logged out.";
+    } else if (req.query.message === 'sessionExpired') {
+        message = "Your session has expired. Please log in again.";
+    }
+
+    res.render('login', { title: "Login", message });
 });
 
 // Handle login form submission
@@ -231,7 +239,9 @@ router.post('/login', async (req, res) => {
 
 // Dashboard route
 router.get('/dashboard', (req, res) => {
-    if (!req.session.user) return res.redirect('/users/login');
+    if (!req.session.user) {
+        return res.redirect('/users/login?message=sessionExpired');
+    }
     res.render('dashboard', { title: "User Dashboard", user: req.session.user });
 });
 
@@ -259,7 +269,8 @@ router.get('/logout', (req, res) => {
             console.error("Error destroying session:", err);
             return res.send("Something went wrong during logout.");
         }
-        res.redirect('/users/login');
+        // Add ?message=logout so login page knows what to show
+        res.redirect('/users/login?message=logout');
     });
 });
 
