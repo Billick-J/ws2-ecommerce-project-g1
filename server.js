@@ -3,64 +3,63 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const session = require('express-session');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Body parser
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// View engine
 app.set('view engine', 'ejs');
-
-
-
 
 // Session setup
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'dev-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false, // set to true only if using HTTPS
-        maxAge: 1 * 60 * 1000 // 15 minutes (in milliseconds)
-    }
+  secret: process.env.SESSION_SECRET || 'dev-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // set to true if using HTTPS
+    maxAge: 15 * 60 * 1000
+  }
 }));
 
-//Routes
-const indexRoute = require('./routes/index');
-const usersRoute = require('./routes/users');
-const passwordRoute = require('./routes/password'); // ✅ add this
-
-app.use('/', indexRoute);
-app.use('/users', usersRoute);
-app.use('/password', passwordRoute); // ✅ mount password routes
-
-
-// MongoDB Setup
+// MongoDB setup
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
-
-// Expose client & dbName to routes
 app.locals.client = client;
 app.locals.dbName = process.env.DB_NAME || "ecommerceDB";
 
+// Routes
+const indexRoute = require('./routes/index');
+const usersRoute = require('./routes/users');
+const passwordRoute = require('./routes/password');
+const pagesRoute = require('./routes/pages');
+
+app.use('/', indexRoute);
+app.use('/users', usersRoute);
+app.use('/password', passwordRoute);
+app.use('/', pagesRoute);
+
+// Start server
 async function main() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB Atlas");
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
 
-        // Select database
-        // const database = client.db("ecommerceDB");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
 
-        // Start server
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-
-    } catch (err) {
-        console.error("MongoDB connection failed", err);
-    }
+  } catch (err) {
+    console.error("MongoDB connection failed", err);
+    process.exit(1);
+  }
 }
-
 
 main();

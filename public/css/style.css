@@ -1,0 +1,51 @@
+/* public/css/style.css - single stylesheet for the site */
+/* Simple, responsive, minimalistic styling */
+
+:root{
+  --brand:#1a73e8;
+  --muted:#666;
+  --bg:#f7f7f9;
+  --card:#fff;
+  --maxw:1000px;
+  --radius:8px;
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial, sans-serif}
+body{background:var(--bg);color:#222;margin:0;padding:0}
+.container{max-width:var(--maxw);margin:20px auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.brand{font-weight:700;font-size:20px}
+.nav a{margin-right:12px;text-decoration:none;color:inherit}
+.card{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,0.04)}
+.form-row{display:flex;flex-direction:column;margin-bottom:10px}
+input[type="text"],input[type="email"],input[type="password"],button,select{padding:8px;border-radius:6px;border:1px solid #ddd;font-size:14px}
+button{cursor:pointer;background:var(--brand);color:#fff;border:none;padding:10px 12px;border-radius:6px}
+.footer{margin-top:24px;padding:12px;text-align:center;font-size:13px;color:var(--muted)}
+
+/* product grid */
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.product .image{height:140px;background:#eee;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999}
+
+/* small helpers */
+.msg{padding:10px;border-radius:6px;margin-bottom:12px}
+.msg.error{background:#ffecec;color:#a00}
+.msg.success{background:#e6ffed;color:#064}
+
+/* password strength */
+.pw-criteria{display:flex;flex-direction:column;font-size:13px;margin-top:6px}
+.pw-criteria div{margin:4px 0}
+.pw-ok{color:green}
+.pw-bad{color:#a00}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 6px 12px;
+  background-color: #eee;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+}
+.btn:hover {
+  background-color: #ddd;
+}

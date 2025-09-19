@@ -1,28 +1,32 @@
-<h1>Admin Dashboard</h1>
-<p>Welcome, <%= currentUser.firstName %> (<%= currentUser.role %>)</p>
-<table>
-
-<thead>
-    <tr>
-        <th>User ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Created</th>
-    </tr>
-</thead>
-<tbody>
-    <% users.forEach(user => { %>
-        <tr>
-            <td><%= user.userId %></td>
-            <td><%= user.firstName %> <%= user.lastName %></td>
-            <td><%= user.email %></td>
-            <td><%= user.role %></td>
-            <td><%= user.accountStatus %></td>
-            <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
-        </tr>
-    <% }) %>
-</tbody>
-</table>
-<p><a href="/users/dashboard">Back to Dashboard</a></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Dashboard</h2>
+    <p><a href="/users/dashboard" class="btn">← Back to Dashboard</a></p>
+    <div class="card">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th></tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u=>{ %>
+            <tr>
+              <td><%= u.userId %></td>
+              <td><%= u.firstName %> <%= u.lastName %></td>
+              <td><%= u.email %></td>
+              <td><%= u.role %></td>
+              <td><%= u.accountStatus %></td>
+              <td><%= new Date(u.createdAt).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

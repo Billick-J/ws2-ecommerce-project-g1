@@ -1,14 +1,31 @@
-<h1>Welcome, <%= user.firstName %> <%= user.lastName %>!</h1>
-<p><strong>User ID:</strong> <%= user.userId %></p>
-<p><strong>Email:</strong> <%= user.email %></p>
-<p><strong>Role:</strong> <%= user.role %></p>
-<p><strong>Status:</strong> Active</p>
-<p><strong>Email Verified:</strong> <%= user.isEmailVerified ? "True" : "False" %></p>
-<ul>
-    <li><a href="#">Edit Profile</a></li>
-    <% if (user.role === 'admin') { %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/users/logout">Logout</a>
+      </nav>
+    </div>
 
-    <li><a href="/users/admin">Admin Dashboard</a></li>
-    <% } %>
-</ul>
-<a href="/users/logout">Logout</a>
+    <div class="card" style="max-width:700px;margin:12px auto">
+      <h2>Dashboard</h2>
+      <p><strong>Name:</strong> <%= user.firstName %> <%= user.lastName %></p>
+      <p><strong>Email:</strong> <%= user.email %></p>
+      <p><strong>User ID:</strong> <%= user.userId %></p>
+      <p><strong>Role:</strong> <%= user.role %></p>
+      <p><strong>Account Status:</strong> <%= user.accountStatus %></p>
+      <p><strong>Email Verified:</strong> <%= user.isEmailVerified ? 'Yes' : 'No' %></p>
+      <% if (user.role === 'admin') { %>
+        <p><a href="/users/admin">Admin Dashboard</a></p>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
