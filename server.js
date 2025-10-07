@@ -36,11 +36,13 @@ app.use(session({
   }
 }));
 
-// expose user session to views (must be before routes/404)
+// expose user session and req to views (must be before routes/404)
 app.use((req, res, next) => {
   res.locals.user = req.session?.user || null;
+  res.locals.req = req; // allows templates to read req.originalUrl
   next();
 });
+
 
 // Routes (mount routers)
 const indexRoute = require('./routes/index');
@@ -54,7 +56,22 @@ app.use('/password', passwordRoute);
 // Health check (useful for Render / uptime checks)
 app.get('/health', (req, res) => res.type('text').send('ok'));
 
-app.get('/boom', () => { throw new Error('test 500') });
+// ✅ STEP 5: Test routes for error handling
+app.get('/crash', (req, res) => { // ✅ Added
+  throw new Error('Intentional crash for testing (sync)');
+});
+
+app.get('/boom', (req, res) => { // ✅ Added (you already had this)
+  throw new Error('Test 500');
+});
+
+app.get('/crash-async', async (req, res, next) => { // ✅ Added
+  try {
+    throw new Error('Async crash test');
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 // Lightweight 404 logger (keep before final 404 handler)
