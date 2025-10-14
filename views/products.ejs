@@ -25,17 +25,23 @@
       </nav>
     </header>
 
-    <h2>Our Products</h2>
-    <div class="products">
-      <% items.forEach(p => { %>
-        <div class="product">
-          <img src="/images/<%= p.image %>" alt="<%= p.name %>">
-          <h3><%= p.name %></h3>
-          <p><%= p.desc %></p>
-          <p><strong><%= p.price %></strong></p>
-        </div>
-      <% }) %>
-    </div>
+    <!-- Products Section -->
+    <section class="card">
+      <h1>Our Products</h1>
+      <div class="products">
+        <% products.forEach(p => { %>
+          <div class="card product">
+            <div class="image">
+              <img src="<%= p.image %>" alt="<%= p.name %>" style="max-height:120px">
+            </div>
+            <h3><%= p.name %></h3>
+            <p><%= p.desc %></p>
+            <strong><%= p.price %></strong>
+            <div style="margin-top:8px"><button>Add to Cart</button></div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
 
     <footer class="footer">
       <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>

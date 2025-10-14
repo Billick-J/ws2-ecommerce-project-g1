@@ -30,7 +30,8 @@
       <div class="products">
         <% products.forEach(p=>{ %>
           <div class="card product">
-            <div class="image"><!-- change (product1.jpg) to your image file --> <img src="/images/<%= p.image %>" alt="<%= p.name %>" style="max-height:120px"></div>
+            <div class="image"><img src="<%= p.image %>" alt="<%= p.name %>" style="max-height:120px">
+            </div>
             <h3><%= p.name %></h3>
             <p><%= p.desc %></p>
             <strong><%= p.price %></strong>

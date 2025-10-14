@@ -100,7 +100,7 @@ app.use((err, req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(500).json({ error: 'Server Error' });
   }
-  res.status(500).render('500', { title: 'Server Error' });
+  res.status(500).render('500', { title: 'Server Error', req});
 });
 
 // MongoDB Setup + start server
