@@ -9,11 +9,18 @@ const products = [
       '/pp/calibarn/calibarn_1.jpeg',
       '/pp/calibarn/calibarn_2.jpeg',
       '/pp/calibarn/calibarn_3.jpeg',
+      '/pp/calibarn/calibarn_4.jpeg',
+      '/pp/calibarn/calibarn_5.jpeg',
+      '/pp/calibarn/calibarn_6.jpeg',
+      '/pp/calibarn/calibarn_7.jpeg',
+      '/pp/calibarn/calibarn_8.jpeg',
+      '/pp/calibarn/calibarn_9.jpeg',
+      '/pp/calibarn/calibarn_10.jpeg'
     ],
-    name: 'Gunpla Starter Set',
-    desc: 'Beginner model kit',
-    price: '₱499',
-    details: 'Includes basic tools and an easy 1/144 model for new builders.'
+    name: 'HG Gundam Calibarn',
+    desc: 'a 1/144 scale model kit of the Gundam Calibarn from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
+    price: '₱1499',
+    details: 'Gunpla model kit of the Gundam Calibarn with detailed parts and articulation.'
   },
   {
     id: 2,
@@ -21,12 +28,19 @@ const products = [
     images: [
       '/pp/aerial/aerial_1.jpeg',
       '/pp/aerial/aerial_2.jpeg',
-      '/pp/aerial/aerial_3.jpeg'
+      '/pp/aerial/aerial_3.jpeg',
+      '/pp/aerial/aerial_4.jpeg',
+      '/pp/aerial/aerial_5.jpeg',
+      '/pp/aerial/aerial_6.jpeg',
+      '/pp/aerial/aerial_7.jpeg',
+      '/pp/aerial/aerial_8.jpeg',
+      '/pp/aerial/aerial_9.jpeg',
+      '/pp/aerial/aerial_10.jpeg'
     ],
-    name: 'High Grade Kit',
-    desc: 'Detailed 1/144 scale',
+    name: 'HG Gundam Aerial',
+    desc: 'a 1/144 scale model kit of the Gundam Aerial from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
     price: '₱1299',
-    details: 'Great articulation for posing and display.'
+    details: 'Gunpla model kit of the Gundam Aerial with advanced articulation and weaponry.'
   },
 
   {
@@ -35,12 +49,19 @@ const products = [
     images: [
       '/pp/aerial_rebuild/aerial_rebuild_1.jpeg',
       '/pp/aerial_rebuild/aerial_rebuild_2.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_3.jpeg'
+      '/pp/aerial_rebuild/aerial_rebuild_3.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_4.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_5.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_6.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_7.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_8.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_9.jpeg',
+      '/pp/aerial_rebuild/aerial_rebuild_10.jpeg'
     ],
-    name: 'Display Base',
-    desc: 'Pose and display your kits',
-    price: '₱299',
-    details: 'Sturdy adjustable base for displaying Gunpla models.'
+    name: 'HG Gundam Aerial Rebuild',
+    desc: 'a 1/144 scale model kit of the Gundam Aerial Rebuild from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
+    price: '₱1499',
+    details: 'Gunpla model kit of the Gundam Aerial Rebuild with enhanced features and display options.'
   }
   // More products here
 ];

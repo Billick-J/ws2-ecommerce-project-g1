@@ -4,81 +4,100 @@
   <meta charset="UTF-8">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/style.css">
+
   <style>
-    /* Slider container and individual image styling */
+    body {
+      margin: 0;
+      padding-top: 80px;
+    }
+
     .product-details {
       display: flex;
       gap: 2rem;
       justify-content: center;
       padding: 2rem;
+      flex-wrap: wrap;
     }
 
-    .image-slider {
+    .product-image {
       width: 450px;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
     }
 
-    .image-slider img {
+    .product-image img {
       width: 100%;
+      height: 100%;
+      object-fit: contain;
       border-radius: 10px;
-      cursor: zoom-in;
+      transition: transform 0.4s ease, opacity 0.3s ease;
     }
 
-    .image-thumbnails {
+    .product-image:hover img {
+      transform: scale(1.5);
+    }
+
+    .image-gallery {
       display: flex;
+      justify-content: center;
       gap: 10px;
       margin-top: 1rem;
+      flex-wrap: wrap;
     }
 
-    .image-thumbnails img {
-      width: 80px;
-      height: 80px;
+    .image-gallery img {
+      width: 90px;
+      height: 90px;
       object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .arrow-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 30px;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-      border-radius: 50%;
-      z-index: 10;
-    }
-
-    .arrow-left {
-      left: 10px;
-    }
-
-    .arrow-right {
-      right: 10px;
-    }
-
-    .zoomed-image {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-      max-width: 80%;
-      max-height: 80%;
-      z-index: 9999;
-      cursor: zoom-out;
-      background: rgba(0,0,0,0.8);
-      padding: 10px;
       border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s, border 0.2s;
+      opacity: 0.8;
+      border: 2px solid transparent;
+    }
+
+    .image-gallery img:hover {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+
+    .image-gallery img.active {
+      border: 2px solid #2563eb;
+      opacity: 1;
+    }
+
+    .product-info {
+      max-width: 400px;
+    }
+
+    .add-to-cart {
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 10px;
+      color: var(--brand);
     }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <!-- Header / Navbar -->
     <header class="header">
       <div class="brand">Nemy's Gunpla & Collectibles</div>
       <nav class="nav">
@@ -96,22 +115,23 @@
       </nav>
     </header>
 
-    <!-- Product Details Section -->
     <section class="product-details">
-      <div class="image-slider">
+      <div class="product-image">
         <img id="main-image" src="<%= product.image %>" alt="<%= product.name %>">
-        <button class="arrow-btn arrow-left" onclick="prevImage()">&#10094;</button>
-        <button class="arrow-btn arrow-right" onclick="nextImage()">&#10095;</button>
+      </div>
 
-        <!-- Zoomed Image -->
-        <img id="zoomed-image" class="zoomed-image" src="<%= product.image %>" alt="<%= product.name %>">
-
-        <!-- Thumbnails -->
-        <div class="image-thumbnails">
-          <% product.images.forEach((image, index) => { %>
-            <img src="<%= image %>" alt="<%= product.name %>">
-          <% }) %>
-        </div>
+      <div class="image-gallery" id="gallery">
+        <% 
+          const allImages = [product.image, ...(product.images || [])];
+          allImages.forEach((img, index) => { 
+        %>
+          <img 
+            src="<%= img %>" 
+            alt="<%= product.name %>" 
+            class="<%= index === 0 ? 'active' : '' %>" 
+            data-index="<%= index %>"
+          >
+        <% }) %>
       </div>
 
       <div class="product-info">
@@ -128,55 +148,11 @@
     </footer>
   </div>
 
-    <!-- Hidden JSON data for product images -->
-<script id="product-data" type="application/json">
-    <%- JSON.stringify(product.images) %>
-  </script>
-  
-  <script>
-    // ✅ Combine main image + gallery images
-    let productImages = JSON.parse(document.getElementById("product-data").textContent);
-    productImages.unshift("<%= product.image %>");
-  
-    let currentImageIndex = 0;
-  
-    // Update displayed image
-    function changeImage(imageSrc) {
-      document.getElementById("main-image").src = imageSrc;
-      document.getElementById("zoomed-image").src = imageSrc;
-    }
-  
-    // Arrow navigation
-    function prevImage() {
-      currentImageIndex = (currentImageIndex - 1 + productImages.length) % productImages.length;
-      changeImage(productImages[currentImageIndex]);
-    }
-  
-    function nextImage() {
-      currentImageIndex = (currentImageIndex + 1) % productImages.length;
-      changeImage(productImages[currentImageIndex]);
-    }
-  
-    // ✅ Add event listeners to thumbnails
-    document.querySelectorAll('.image-thumbnails img').forEach((img, index) => {
-      img.addEventListener('click', () => {
-        currentImageIndex = index + 1; // +1 because we unshifted the main image
-        changeImage(img.src);
-      });
-    });
-  
-    // ✅ Zoom functionality
-    const mainImage = document.getElementById("main-image");
-    const zoomedImage = document.getElementById("zoomed-image");
-  
-    mainImage.addEventListener("click", () => {
-      zoomedImage.style.display = "block";
-    });
-  
-    zoomedImage.addEventListener("click", () => {
-      zoomedImage.style.display = "none";
-    });
-  </script>
-  
+  <!-- Fullscreen Image Modal -->
+  <div id="fullscreen-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000;">
+    <img id="fullscreen-img" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+  </div>
+
+  <script src="/js/product-gallery.js"></script>
 </body>
 </html>
