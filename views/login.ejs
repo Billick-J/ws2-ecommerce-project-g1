@@ -1,30 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= title %></title>
+  <title>Login</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      background-color: #353535;
+      color: #ffffff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3535ff;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" style="max-width:420px;margin:0 auto">
-      <h2>Login</h2>
-      <% if (typeof message !== 'undefined' && message) { %>
-        <div class="msg error"><%= message %></div>
+  <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+
+      <% if (!user) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+        <a href="/users/dashboard">Dashboard</a>
+        <a href="/users/logout">Logout</a>
       <% } %>
-      <form action="/users/login" method="POST">
-        <div class="form-row">
-          <label>Email</label>
-          <input type="email" name="email" required>
-        </div>
-        <div class="form-row">
-          <label>Password</label>
-          <input type="password" name="password" required>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p style="margin-top:10px"><a href="/password/forgot">Forgot Password?</a></p>
-      <p>Don’t have an account? <a href="/users/register">Register here</a></p>
-    </div>
+    </nav>
+  </header>
+
+  <div class="container card" style="max-width:400px; margin-top:40px;">
+    <h2>Login</h2>
+    <form action="/users/login" method="POST">
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="text" name="email" required>
+      </div>
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" name="password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/users/register">Register here</a></p>
   </div>
 </body>
 </html>

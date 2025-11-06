@@ -1,72 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= title %></title>
+  <title>Register</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      background-color: #353535;
+      color: #ffffff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3535ff;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" style="max-width:480px;margin:0 auto">
-      <h2>Register</h2>
-      <% if (typeof message !== 'undefined' && message) { %>
-        <div class="msg error"><%= message %></div>
-      <% } %>
-      <% if (typeof showVerificationLink !== 'undefined' && showVerificationLink) { %>
-        <div class="msg success">Verification link (for testing): <a href="<%= showVerificationLink %>"><%= showVerificationLink %></a></div>
-      <% } %>
+  <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
 
-      <form id="registerForm" action="/users/register" method="POST" novalidate>
-        <div class="form-row">
-          <label>First Name</label>
-          <input type="text" name="firstName" required>
-        </div>
-        <div class="form-row">
-          <label>Last Name</label>
-          <input type="text" name="lastName" required>
-        </div>
-        <div class="form-row">
-          <label>Email</label>
-          <input type="email" name="email" required>
-        </div>
-        <div class="form-row">
-          <label>Password</label>
-          <input id="password" type="password" name="password" required>
-          <div class="pw-criteria" id="pwCriteria">
-            <div id="len" class="pw-bad">At least 8 characters</div>
-            <div id="upper" class="pw-bad">Upper & lower case letters</div>
-            <div id="num" class="pw-bad">At least one number</div>
-            <div id="special" class="pw-bad">At least one special character</div>
-          </div>
-        </div>
+      <% if (!user) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+        <a href="/users/dashboard">Dashboard</a>
+        <a href="/users/logout">Logout</a>
+      <% } %>
+    </nav>
+  </header>
 
-        <button type="submit">Register</button>
-      </form>
-    </div>
+  <div class="container card" style="max-width:400px; margin-top:40px;">
+    <h2>Register</h2>
+    <form action="/users/register" method="POST">
+      <div class="form-group">
+        <label>Username:</label>
+        <input type="text" name="username" required>
+      </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="text" name="email" required>
+      </div>
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" name="password" required>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="/users/login">Login here</a></p>
   </div>
-
-<script>
-// Client-side password strength validation
-const pw = document.getElementById('password');
-const len = document.getElementById('len');
-const upper = document.getElementById('upper');
-const num = document.getElementById('num');
-const special = document.getElementById('special');
-pw.addEventListener('input', () => {
-  const v = pw.value;
-  len.className = v.length >= 8 ? 'pw-ok' : 'pw-bad';
-  upper.className = /(?=.*[A-Z])(?=.*[a-z])/.test(v) ? 'pw-ok' : 'pw-bad';
-  num.className = /[0-9]/.test(v) ? 'pw-ok' : 'pw-bad';
-  special.className = /[!@#$%^&*(),.?":{}|<>]/.test(v) ? 'pw-ok' : 'pw-bad';
-});
-
-// Prevent submit if criteria not met
-document.getElementById('registerForm').addEventListener('submit', (e) => {
-  const v = pw.value;
-  if (!(v.length >=8 && /(?=.*[A-Z])(?=.*[a-z])/.test(v) && /[0-9]/.test(v) && /[!@#$%^&*(),.?":{}|<>]/.test(v))) {
-    e.preventDefault();
-    alert('Password does not meet strength requirements.');
-  }
-});
-</script>
 </body>
 </html>

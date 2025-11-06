@@ -28,15 +28,20 @@
       <h1>Welcome to Nemy's Gunpla & Collectibles</h1>
       <p>Your one-stop shop for model kits and collectibles.</p>
       <div class="products">
-        <% products.forEach(p=>{ %>
-          <div class="card product">
-            <div class="image"><img src="<%= p.image %>" alt="<%= p.name %>" style="max-height:120px">
+        <% products.forEach(p => { %>
+          <a href="/products/<%= p.id %>" class="product-link">
+            <div class="card product">
+              <div class="image">
+                <img src="<%= p.image %>" alt="<%= p.name %>" style="max-height:120px">
+              </div>
+              <h3><%= p.name %></h3>
+              <p><%= p.desc %></p>
+              <strong><%= p.price %></strong>
+              <div style="margin-top:8px">
+                <button>Add to Cart</button>
+              </div>
             </div>
-            <h3><%= p.name %></h3>
-            <p><%= p.desc %></p>
-            <strong><%= p.price %></strong>
-            <div style="margin-top:8px"><button>Add to Cart</button></div>
-          </div>
+          </a>
         <% }) %>
       </div>
     </section>
