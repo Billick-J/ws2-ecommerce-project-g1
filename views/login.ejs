@@ -61,9 +61,25 @@
         <label>Password:</label>
         <input type="password" name="password" required>
       </div>
+  
+      <!-- ✅ Turnstile widget -->
+      <div
+        class="cf-turnstile"
+        data-sitekey="<%= process.env.TURNSTILE_SITEKEY %>">
+      </div>
+  
       <button type="submit">Login</button>
     </form>
+  
+    <!-- ✅ Turnstile script -->
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer>
+    </script>
+  
     <p>Don't have an account? <a href="/users/register">Register here</a></p>
   </div>
+  
 </body>
 </html>
