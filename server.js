@@ -1,4 +1,5 @@
 // server.js
+const verifyTurnstile = require('/utils/turnstileVerify');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -15,7 +16,32 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
 // security & performance
-app.use(helmet());
+// security & performance
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "https://challenges.cloudflare.com",
+        ],
+        frameSrc: [
+          "'self'",
+          "https://challenges.cloudflare.com",
+        ],
+        connectSrc: [
+          "'self'",
+          "https://challenges.cloudflare.com",
+        ],
+        imgSrc: ["'self'", "data:", "https://challenges.cloudflare.com"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+      }
+    }
+  })
+);
+app.use(compression());
+
 app.use(compression());
 
 // static files (served from /public)
