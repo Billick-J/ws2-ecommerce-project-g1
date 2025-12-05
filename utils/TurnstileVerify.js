@@ -7,7 +7,6 @@ if (typeof fetch === 'function') {
   fetchImpl = fetch;
 } else {
   try {
-    // node-fetch v2 style require; if using node-fetch v3+ see ESM requirements
     fetchImpl = require('node-fetch');
   } catch (e) {
     throw new Error('No fetch implementation found. Use Node 18+ or install node-fetch: npm install node-fetch@2');

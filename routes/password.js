@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const verifyTurnstile = require('../utils/turnstileVerify');
+const verifyTurnstile = require('../utils/turnstileVerify.js');
 const { v4: uuidv4 } = require('uuid');
 const { Resend } = require('resend');
 
@@ -81,8 +81,10 @@ router.post('/reset/:token', async (req, res) => {
     const turnToken = req.body['cf-turnstile-response'];
     const verifyResult = await verifyTurnstile(turnToken, req.ip);
 
-    if (!verifyResult?.success)
-      return res.send("Verification failed. Try again.");
+    if (!verifyResult?.success) {
+    return res.status(400).send("Verification failed. Try again.");
+    }
+
 
     const user = await usersCollection.findOne({
       resetToken: req.params.token,

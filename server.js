@@ -1,5 +1,5 @@
 // server.js
-const verifyTurnstile = require('/utils/turnstileVerify');
+const verifyTurnstile = require('./utils/turnstileVerify');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -26,6 +26,15 @@ app.use(
           "'self'",
           "https://challenges.cloudflare.com",
         ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'", // required because you use inline <style>
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://challenges.cloudflare.com",
+        ],
         frameSrc: [
           "'self'",
           "https://challenges.cloudflare.com",
@@ -34,13 +43,10 @@ app.use(
           "'self'",
           "https://challenges.cloudflare.com",
         ],
-        imgSrc: ["'self'", "data:", "https://challenges.cloudflare.com"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
       }
     }
   })
 );
-app.use(compression());
 
 app.use(compression());
 

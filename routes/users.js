@@ -30,7 +30,20 @@ router.post('/register', async (req, res) => {
 
     const { firstName, lastName, email, password } = req.body;
 
-    // Turnstile
+    // ----- Server-side password validation -----
+    const passwordValid = password.length >= 8 &&
+                          /[A-Z]/.test(password) &&
+                          /[a-z]/.test(password) &&
+                          /\d/.test(password);
+
+    if (!passwordValid) {
+      return res.status(400).render('register', {
+        title: "Register",
+        message: "Password does not meet requirements. It must have at least 8 characters, 1 uppercase, 1 lowercase, and 1 number."
+      });
+    }
+
+    // Turnstile verification
     const token = req.body['cf-turnstile-response'];
     const verifyResult = await verifyTurnstile(token, req.ip);
 
@@ -101,6 +114,7 @@ router.post('/register', async (req, res) => {
     });
   }
 });
+
 
 // ----- GET Login -----
 router.get('/login', (req, res) => {

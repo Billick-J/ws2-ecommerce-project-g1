@@ -29,6 +29,27 @@
     button:hover {
       background-color: #3535ff;
     }
+
+    .password-requirements li {
+      color: red; /* default red when not met */
+      margin-left: 15px;
+      font-weight: 500;
+      transition: color 0.3s ease; /* smooth color change */
+    }
+
+    .password-requirements li.valid {
+      color: green !important; /* turns green when requirement is met */
+    }
+
+    /* Error message styling */
+    .error-message {
+      background-color: #ffdddd;
+      border-left: 4px solid #ff5c5c;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      color: #a70000;
+    }
   </style>
 </head>
 <body>
@@ -52,38 +73,73 @@
 
   <div class="container card" style="max-width:400px; margin-top:40px;">
     <h2>Register</h2>
+
+    <!-- Display backend error message -->
+    <% if (message) { %>
+      <div class="error-message"><%= message %></div>
+    <% } %>
+
     <form action="/users/register" method="POST">
+
+      <!-- First Name -->
+      <div class="form-group">
+        <label>First Name:</label>
+        <input type="text" name="firstName" required>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group">
+        <label>Last Name:</label>
+        <input type="text" name="lastName" required>
+      </div>
+
+      <!-- Username -->
       <div class="form-group">
         <label>Username:</label>
         <input type="text" name="username" required>
       </div>
+
+      <!-- Email -->
       <div class="form-group">
         <label>Email:</label>
         <input type="text" name="email" required>
       </div>
+
+      <!-- Password -->
       <div class="form-group">
         <label>Password:</label>
         <input type="password" name="password" required>
+        <!-- Password requirements -->
+        <ul class="password-requirements">
+          <li id="req-length">At least 8 characters</li>
+          <li id="req-uppercase">At least 1 uppercase letter</li>
+          <li id="req-lowercase">At least 1 lowercase letter</li>
+          <li id="req-number">At least 1 number</li>
+        </ul>
       </div>
-  
-      <!-- ✅ Turnstile widget -->
+
+      <!-- Turnstile widget -->
       <div
         class="cf-turnstile"
         data-sitekey="<%= process.env.TURNSTILE_SITEKEY %>">
       </div>
-  
+
       <button type="submit">Register</button>
     </form>
-  
+
     <p>Already have an account? <a href="/users/login">Login here</a></p>
-  
-    <!-- ✅ Load Turnstile script -->
+
+    <!-- Load Turnstile script -->
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
       async
       defer>
     </script>
+
+    <!-- Password validation (external file) -->
+    <script src="/js/password-validation.js"></script>
+
   </div>
-  
+
 </body>
 </html>
