@@ -97,7 +97,7 @@ router.get('/products/:id', (req, res) => {
 // ℹ️ About page
 router.get('/about', (req, res) => {
   res.render('about', {
-    title: "About Nemy's Gunpla & Collectibles",
+    title: "About Nemy's Gunpla & Collectibles — Gunpla Kits & Model Shop",
     name: "Nemy's Gunpla & Collectibles",
     description: "Your one-stop shop for Gunpla model kits and collectibles.",
     user: req.session.user
