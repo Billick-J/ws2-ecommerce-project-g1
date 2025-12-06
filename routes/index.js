@@ -99,11 +99,10 @@ router.get('/about', (req, res) => {
   res.render('about', {
     title: "About Nemy's Gunpla & Collectibles — Gunpla Kits & Model Shop",
     name: "Nemy's Gunpla & Collectibles",
-    description: "Your one-stop shop for Gunpla model kits and collectibles.",
+    description: "Your one-stop shop for Gunpla model kits and collectibles, offering detailed models, accessories, and expert guidance for hobbyists of all skill levels.",
     user: req.session.user
   });
 });
-
 
 // ✉️ Contact page
 router.get('/contact', (req, res) => {
