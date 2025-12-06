@@ -105,6 +105,10 @@ app.get('/crash-async', async (req, res, next) => { // ✅ Added
   }
 });
 
+// Serve sitemap.xml from project root
+app.get("/sitemap.xml", (req, res) => {
+  res.sendFile(path.join(__dirname, "sitemap.xml"));
+});
 
 // Lightweight 404 logger (keep before final 404 handler)
 app.use((req, res, next) => {
