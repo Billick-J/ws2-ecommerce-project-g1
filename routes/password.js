@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const verifyTurnstile = require('../utils/turnstileVerify.js');
+const verifyTurnstile = require('../utils/TurnstileVerify.js');
 const { v4: uuidv4 } = require('uuid');
 const { Resend } = require('resend');
 

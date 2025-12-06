@@ -1,5 +1,5 @@
 // server.js
-const verifyTurnstile = require('./utils/turnstileVerify');
+const verifyTurnstile = require('./utils/TurnstileVerify.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
