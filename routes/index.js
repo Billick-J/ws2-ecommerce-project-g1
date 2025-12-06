@@ -96,8 +96,11 @@ router.get('/products/:id', (req, res) => {
 
 // ℹ️ About page
 router.get('/about', (req, res) => {
-  const user = req.session.user || null;
-  res.render('about', { title: "About Us", user });
+  res.render('about', {
+    title: "About Us",
+    name: "Nemy's Gunpla & Collectibles",
+    description: "Your one-stop shop for Gunpla model kits and collectibles."
+  });
 });
 
 // ✉️ Contact page
