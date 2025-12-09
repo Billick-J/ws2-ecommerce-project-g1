@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .image-thumb {
+      position: relative;
+      display: inline-block;
+      margin: 5px;
+    }
+    .image-thumb img {
+      width: 80px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .delete-btn {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+
+        <% if (!user) { %>
+          <a href="/users/login">Login</a>
+          <a href="/users/register">Register</a>
+        <% } else { %>
+          <a href="/users/dashboard">Dashboard</a>
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h1>Edit Product</h1>
+      <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" class="form-row">
+        <label>Name: <input type="text" name="name" value="<%= product.name %>" required></label>
+        <label>Description: <textarea name="desc" required><%= product.desc %></textarea></label>
+        <label>Price: <input type="text" name="price" value="<%= product.price %>" required></label>
+
+        <% if (product.images && product.images.length > 0) { %>
+          <div>
+            <p>Existing Images (click × to delete):</p>
+            <% product.images.forEach((img, idx) => { %>
+              <div class="image-thumb">
+                <img src="<%= img %>" alt="Image <%= idx+1 %>">
+                <% if (img !== '/images/default-product.jpeg') { %>
+                  <button type="submit"
+                          formaction="/admin/products/delete-image/<%= product._id %>/<%= encodeURIComponent(img) %>"
+                          formmethod="POST"
+                          class="delete-btn">&times;</button>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <label>Upload New Images (choose multiple to add): 
+          <input type="file" name="images" multiple accept="image/*">
+        </label>
+
+        <button type="submit">Update Product</button>
+        <a href="/admin/products" class="btn" style="margin-top:10px;">← Back to Products</a>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>
+    </footer>
+  </div>
+</body>
+</html>

@@ -3,11 +3,10 @@
 <head>
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/style.css">
-  <meta name="google-site-verification" content="KiW54CBleQV_Eyf1QtG7AJvz4rSfJZiyIbz1Fk9wi-g" />
 </head>
-
 <body>
   <div class="container">
+    <!-- Navigation Bar -->
     <header class="header">
       <div class="brand">Nemy's Gunpla & Collectibles</div>
       <nav class="nav">
@@ -26,24 +25,33 @@
       </nav>
     </header>
 
-    <section class="card">
+    <!-- Welcome Section -->
+    <section class="card" style="text-align:center; margin-bottom:20px;">
       <h1>Welcome to Nemy's Gunpla & Collectibles</h1>
-      <p>Your one-stop shop for model kits and collectibles.</p>
+      <p>Your one-stop shop for model kits and collectibles</p>
+    </section>
+
+    <!-- Products Section -->
+    <section class="card">
+      <h1>Featured Products</h1>
       <div class="products">
         <% products.forEach(p => { %>
-          <a href="/products/<%= p.id %>" class="product-link">
-            <div class="card product">
+          <div class="card product">
+            <a href="/products/<%= p._id %>" class="product-link">
               <div class="image">
-                <img src="<%= p.image %>" alt="<%= p.name %>" style="max-height:120px">
+                <img src="<%= (p.images && p.images.length > 0) ? p.images[0] : '/images/default-product.jpeg' %>" 
+     alt="<%= p.name %>" style="max-height:120px">
               </div>
               <h3><%= p.name %></h3>
-              <p><%= p.desc %></p>
-              <strong><%= p.price %></strong>
-              <div style="margin-top:8px">
-                <button>Add to Cart</button>
-              </div>
-            </div>
-          </a>
+              <strong>₱<%= p.price %></strong>
+            </a>
+            <% if (user) { %>
+              <form action="/cart/add" method="POST" style="margin-top:8px;">
+                <input type="hidden" name="productId" value="<%= p._id %>">
+                <button type="submit">Add to Cart</button>
+              </form>
+            <% } %>
+          </div>
         <% }) %>
       </div>
     </section>

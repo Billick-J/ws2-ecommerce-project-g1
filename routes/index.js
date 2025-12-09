@@ -1,97 +1,60 @@
 const express = require('express');
 const router = express.Router();
+const { ObjectId } = require('mongodb');
 
-const products = [
-  {
-    id: 1,
-    image: '/pp/calibarn/calibarn_box.jpeg',  // Main image for listing page
-    images: [  // Additional images for the slider
-      '/pp/calibarn/calibarn_1.jpeg',
-      '/pp/calibarn/calibarn_2.jpeg',
-      '/pp/calibarn/calibarn_3.jpeg',
-      '/pp/calibarn/calibarn_4.jpeg',
-      '/pp/calibarn/calibarn_5.jpeg',
-      '/pp/calibarn/calibarn_6.jpeg',
-      '/pp/calibarn/calibarn_7.jpeg',
-      '/pp/calibarn/calibarn_8.jpeg',
-      '/pp/calibarn/calibarn_9.jpeg',
-      '/pp/calibarn/calibarn_10.jpeg'
-    ],
-    name: 'HG Gundam Calibarn',
-    desc: 'a 1/144 scale model kit of the Gundam Calibarn from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
-    price: '₱1499',
-    details: 'Gunpla model kit of the Gundam Calibarn with detailed parts and articulation.'
-  },
-  {
-    id: 2,
-    image: '/pp/aerial/aerial_box.jpeg',
-    images: [
-      '/pp/aerial/aerial_1.jpeg',
-      '/pp/aerial/aerial_2.jpeg',
-      '/pp/aerial/aerial_3.jpeg',
-      '/pp/aerial/aerial_4.jpeg',
-      '/pp/aerial/aerial_5.jpeg',
-      '/pp/aerial/aerial_6.jpeg',
-      '/pp/aerial/aerial_7.jpeg',
-      '/pp/aerial/aerial_8.jpeg',
-      '/pp/aerial/aerial_9.jpeg',
-      '/pp/aerial/aerial_10.jpeg'
-    ],
-    name: 'HG Gundam Aerial',
-    desc: 'a 1/144 scale model kit of the Gundam Aerial from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
-    price: '₱1299',
-    details: 'Gunpla model kit of the Gundam Aerial with advanced articulation and weaponry.'
-  },
+// 🏠 Home route — optionally show featured products
+router.get('/', async (req, res) => {
+  try {
+    const db = req.app.locals.client.db(req.app.locals.dbName);
+    const products = await db.collection('products').find().toArray();
 
-  {
-    id: 3,
-    image: '/pp/aerial_rebuild/aerial_rebuild_box.jpeg',
-    images: [
-      '/pp/aerial_rebuild/aerial_rebuild_1.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_2.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_3.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_4.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_5.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_6.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_7.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_8.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_9.jpeg',
-      '/pp/aerial_rebuild/aerial_rebuild_10.jpeg'
-    ],
-    name: 'HG Gundam Aerial Rebuild',
-    desc: 'a 1/144 scale model kit of the Gundam Aerial Rebuild from the anime/manga series Mobile Suit Gundam: The Witch from Mercury.',
-    price: '₱1499',
-    details: 'Gunpla model kit of the Gundam Aerial Rebuild with enhanced features and display options.'
+    res.render('index', {
+      title: "Nemy's Gunpla & Collectibles",
+      user: req.session.user || null,
+      products
+    });
+  } catch (err) {
+    console.error("Failed to load home page products:", err);
+    res.render('index', { title: "Nemy's Gunpla & Collectibles", user: req.session.user || null, products: [] });
   }
-  // More products here
-];
-
-
-
-
-// 🏠 Home route
-router.get('/', (req, res) => {
-  const user = req.session.user || null;
-  res.render('index', { title: "Nemy's Gunpla & Collectibles", user, products });
 });
 
 // 🛒 Products page — shows all products
-router.get('/products', (req, res) => {
-  const user = req.session.user || null;
-  res.render('products', { title: "Our Products", user, products });
+router.get('/products', async (req, res) => {
+  try {
+    const db = req.app.locals.client.db(req.app.locals.dbName);
+    const products = await db.collection('products').find().toArray();
+
+    res.render('products', {
+      title: "Our Products",
+      user: req.session.user || null,
+      products
+    });
+  } catch (err) {
+    console.error("Failed to load products page:", err);
+    res.render('products', { title: "Our Products", user: req.session.user || null, products: [] });
+  }
 });
 
 // 📦 Product details page — shows one product by ID
-router.get('/products/:id', (req, res) => {
-  const user = req.session.user || null;
-  const { id } = req.params;
+router.get('/products/:id', async (req, res) => {
+  try {
+    const db = req.app.locals.client.db(req.app.locals.dbName);
+    const product = await db.collection('products').findOne({ _id: new ObjectId(req.params.id) });
 
-  const product = products.find(p => p.id == id);
-  if (!product) {
-    return res.status(404).render('500', { title: 'Product Not Found', user });
+    if (!product) {
+      return res.status(404).render('500', { title: 'Product Not Found', user: req.session.user || null });
+    }
+
+    res.render('product-details', {
+      title: product.name,
+      user: req.session.user || null,
+      product
+    });
+  } catch (err) {
+    console.error("Failed to load product details:", err);
+    res.status(500).render('500', { title: "Product Error", user: req.session.user || null });
   }
-
-  res.render('product-details', { title: product.name, user, product });
 });
 
 // ℹ️ About page
@@ -100,14 +63,13 @@ router.get('/about', (req, res) => {
     title: "About Nemy's Gunpla & Collectibles — Gunpla Kits & Model Shop",
     name: "Nemy's Gunpla & Collectibles",
     description: "Your one-stop shop for Gunpla model kits and collectibles, offering detailed models, accessories, and expert guidance for hobbyists of all skill levels.",
-    user: req.session.user
+    user: req.session.user || null
   });
 });
 
 // ✉️ Contact page
 router.get('/contact', (req, res) => {
-  const user = req.session.user || null;
-  res.render('contact', { title: "Contact Us", user });
+  res.render('contact', { title: "Contact Us", user: req.session.user || null });
 });
 
 module.exports = router;

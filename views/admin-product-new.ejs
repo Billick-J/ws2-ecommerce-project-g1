@@ -13,6 +13,7 @@
         <a href="/products">Products</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
+
         <% if (!user) { %>
           <a href="/users/login">Login</a>
           <a href="/users/register">Register</a>
@@ -24,19 +25,19 @@
     </header>
 
     <section class="card">
-      <h1>Welcome, <%= user.firstName %>!</h1>
+      <h1>Add New Product</h1>
+      <form action="/admin/products/new" method="POST" enctype="multipart/form-data" class="form-row">
+        <label>Name: <input type="text" name="name" required></label>
+        <label>Description: <textarea name="desc" required></textarea></label>
+        <label>Price: <input type="text" name="price" required></label>
 
-      <p>Email: <%= user.email %></p>
-      <p>Role: <%= user.role %></p>
+        <label>Upload Images (choose multiple): 
+          <input type="file" name="images" multiple accept="image/*" required>
+        </label>
 
-      <% if (user.role === 'admin') { %>
-        <div class="admin-links" style="margin-top:20px;">
-          <h2>Admin Links</h2>
-          <a href="/admin/products" class="btn" style="margin-right:12px;">Manage Products</a><br>
-          <a href="/admin/products/new" class="btn">Add New Product</a><br>
-          <a href="/admin" class="btn" style="margin-top:10px;">View All Users</a>
-        </div>
-      <% } %>
+        <button type="submit">Add Product</button>
+        <a href="/admin/products" class="btn" style="margin-top:10px;">← Back to Products</a>
+      </form>
     </section>
 
     <footer class="footer">

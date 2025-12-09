@@ -6,7 +6,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Navigation Bar -->
     <header class="header">
       <div class="brand">Nemy's Gunpla & Collectibles</div>
       <nav class="nav">
@@ -25,29 +24,32 @@
       </nav>
     </header>
 
-    <!-- Products Section -->
     <section class="card">
-      <h1>Our Products</h1>
+      <h1>Admin: Products</h1>
+
+      <div style="margin-bottom: 12px;">
+        <a href="/admin/products/new" class="btn" style="margin-right: 12px;">Add New Product</a>
+        <a href="/admin" class="btn">View All Users</a>
+      </div>
+
       <div class="products">
         <% products.forEach(p => { %>
           <div class="card product">
-            <a href="/products/<%= p._id %>" class="product-link">
-              <div class="image">
-                <img src="<%= (p.images && p.images.length > 0) ? p.images[0] : '/images/default-product.jpeg' %>" 
-     alt="<%= p.name %>" style="max-height:120px">
-              </div>
-              <h3><%= p.name %></h3>
-              <strong>₱<%= p.price %></strong>
-            </a>
-            <% if (user) { %>
-              <form action="/cart/add" method="POST" style="margin-top:8px;">
-                <input type="hidden" name="productId" value="<%= p._id %>">
-                <button type="submit">Add to Cart</button>
+            <div class="image">
+              <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '/images/default-product.jpeg' %>" alt="<%= p.name %>" style="max-height:120px">
+            </div>
+            <h3><%= p.name %></h3>
+            <p><%= p.desc %></p>
+            <strong><%= p.price %></strong>
+            <div style="margin-top:8px;">
+              <a href="/admin/products/edit/<%= p._id %>" class="btn" style="margin-right:6px;">Edit</a>
+              <form action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
+                <button type="submit" class="btn" style="background:#d33;">Delete</button>
               </form>
-            <% } %>
+            </div>
           </div>
         <% }) %>
-      </div>      
+      </div>
     </section>
 
     <footer class="footer">

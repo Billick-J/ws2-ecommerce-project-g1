@@ -1,101 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/style.css">
-
   <style>
-    body {
-      margin: 0;
-      padding-top: 80px;
-    }
-
-    .product-details {
+    .product-container {
       display: flex;
-      gap: 2rem;
-      justify-content: center;
-      padding: 2rem;
+      gap: 24px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
-
-    .product-image {
-      width: 450px;
-      aspect-ratio: 1 / 1;
-      overflow: hidden;
-      border-radius: 10px;
-      background: #f2f2f2;
+    .slider {
+      flex: 1 1 400px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 10px;
-      transition: transform 0.4s ease, opacity 0.3s ease;
-    }
-
-    .product-image:hover img {
-      transform: scale(1.5);
-    }
-
-    .image-gallery {
-      display: flex;
-      justify-content: center;
+      flex-direction: column;
       gap: 10px;
-      margin-top: 1rem;
-      flex-wrap: wrap;
     }
-
-    .image-gallery img {
-      width: 90px;
-      height: 90px;
-      object-fit: cover;
+    .slider-main img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
       border-radius: 8px;
+    }
+    .slider-thumbs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .slider-thumbs img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
       cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s, border 0.2s;
-      opacity: 0.8;
+      border-radius: 6px;
       border: 2px solid transparent;
     }
-
-    .image-gallery img:hover {
-      transform: scale(1.05);
-      opacity: 1;
+    .slider-thumbs img.active {
+      border-color: var(--brand);
     }
-
-    .image-gallery img.active {
-      border: 2px solid #2563eb;
-      opacity: 1;
+    .product-details {
+      flex: 1 1 300px;
     }
-
-    .product-info {
-      max-width: 400px;
+    .product-details h2 {
+      margin-top: 0;
     }
-
-    .add-to-cart {
-      background: var(--brand);
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      margin-top: 10px;
-    }
-
-    .price {
-      font-size: 1.3rem;
-      font-weight: bold;
-      margin-top: 10px;
-      color: var(--brand);
+    .product-details p {
+      line-height: 1.4;
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <header class="header">
@@ -105,6 +58,7 @@
         <a href="/products">Products</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
+
         <% if (!user) { %>
           <a href="/users/login">Login</a>
           <a href="/users/register">Register</a>
@@ -115,44 +69,43 @@
       </nav>
     </header>
 
-    <section class="product-details">
-      <div class="product-image">
-        <img id="main-image" src="<%= product.image %>" alt="<%= product.name %>">
+    <section class="product-container">
+      <!-- Image Slider -->
+      <div class="slider">
+        <div class="slider-main">
+          <img id="mainImage" src="<%= product.images && product.images.length ? product.images[0] : product.image %>" alt="<%= product.name %>">
+        </div>
+        <div class="slider-thumbs">
+          <% if (product.images && product.images.length) { %>
+            <% product.images.forEach((img, idx) => { %>
+              <img src="<%= img %>" alt="Thumbnail <%= idx+1 %>" class="<%= idx === 0 ? 'active' : '' %>" onclick="showImage('<%= img %>', this)">
+            <% }) %>
+          <% } %>
+        </div>
       </div>
 
-      <div class="image-gallery" id="gallery">
-        <% 
-          const allImages = [product.image, ...(product.images || [])];
-          allImages.forEach((img, index) => { 
-        %>
-          <img 
-            src="<%= img %>" 
-            alt="<%= product.name %>" 
-            class="<%= index === 0 ? 'active' : '' %>" 
-            data-index="<%= index %>"
-          >
-        <% }) %>
-      </div>
-
-      <div class="product-info">
-        <h1><%= product.name %></h1>
+      <!-- Product Details -->
+      <div class="product-details">
+        <h2><%= product.name %></h2>
+        <p><strong>Price:</strong> ₱<%= product.price %></p>
         <p><%= product.desc %></p>
-        <p><%= product.details %></p>
-        <div class="price"><%= product.price %></div>
-        <button class="add-to-cart">Add to Cart</button>
+
+        <% if (user) { %>
+          <form action="/cart/add" method="POST">
+            <input type="hidden" name="productId" value="<%= product._id %>">
+            <button type="submit">Add to Cart</button>
+          </form>
+        <% } %>
       </div>
     </section>
-
-    <footer class="footer">
-      <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>
-    </footer>
   </div>
 
-  <!-- Fullscreen Image Modal -->
-  <div id="fullscreen-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000;">
-    <img id="fullscreen-img" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
-  </div>
-
-  <script src="/js/product-gallery.js"></script>
+  <script>
+    function showImage(src, thumb) {
+      document.getElementById('mainImage').src = src;
+      document.querySelectorAll('.slider-thumbs img').forEach(img => img.classList.remove('active'));
+      thumb.classList.add('active');
+    }
+  </script>
 </body>
 </html>

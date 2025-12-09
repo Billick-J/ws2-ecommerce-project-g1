@@ -1,4 +1,4 @@
 1. npm install
 2. npm install uuid@8.3.2
-3. get .env file in google email
+3. npm install multer
 4. node server.js
