@@ -28,7 +28,7 @@ var(--accent); }
     <div class="links">
     <a class="primary" href="<%= (req && req.originalUrl) ? req.originalUrl : '/' %>">Try again</a>
     <a href="/">Home</a>
-    <% if (user) { %>
+    <% if (locals.user) { %>
     <a href="/users/dashboard">Dashboard</a>
     <a href="/users/logout">Logout</a>
     <% } else { %>

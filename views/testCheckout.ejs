@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+</head>
+<body>
+  <h1>Test Checkout</h1>
+  <form action="/orders/checkout" method="POST">
+    <textarea name="items" rows="6" cols="50">
+      [
+        { "productId": "64f123abc...", "quantity": 2 },
+        { "productId": "64f456def...", "quantity": 1 }
+      ]
+    </textarea>
+    <button type="submit">Submit Order</button>
+  </form>
+</body>
+</html>

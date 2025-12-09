@@ -78,7 +78,10 @@
         <div class="slider-thumbs">
           <% if (product.images && product.images.length) { %>
             <% product.images.forEach((img, idx) => { %>
-              <img src="<%= img %>" alt="Thumbnail <%= idx+1 %>" class="<%= idx === 0 ? 'active' : '' %>" onclick="showImage('<%= img %>', this)">
+              <img src="<%= img %>" 
+              alt="Thumbnail <%= idx+1 %>" 
+              class="thumb <%= idx === 0 ? 'active' : '' %>" 
+              data-src="<%= img %>">
             <% }) %>
           <% } %>
         </div>
@@ -100,12 +103,6 @@
     </section>
   </div>
 
-  <script>
-    function showImage(src, thumb) {
-      document.getElementById('mainImage').src = src;
-      document.querySelectorAll('.slider-thumbs img').forEach(img => img.classList.remove('active'));
-      thumb.classList.add('active');
-    }
-  </script>
+  <script src="/js/product-details.js"></script>
 </body>
 </html>

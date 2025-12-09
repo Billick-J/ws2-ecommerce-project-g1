@@ -125,16 +125,22 @@ router.post('/login', async (req, res) => {
       return res.render('login', { title: "Login", message: "Account inactive. Contact support." });
 
     req.session.user = {
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      isEmailVerified: user.isEmailVerified,
-      accountStatus: user.accountStatus
-    };
+    userId: user.userId,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    role: user.role,
+    isEmailVerified: user.isEmailVerified,
+    accountStatus: user.accountStatus
+  };
 
+  req.session.save(err => {
+    if (err) {
+      console.error("Session save error:", err);
+      return res.status(500).send("Could not save session.");
+    }
     res.redirect('/users/dashboard');
+  });
 
   } catch (err) {
     console.error("Login error:", err);

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/admin/orders">Admin Orders</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h1>Order <%= order.orderId %></h1>
+      <p><strong>Customer:</strong> <%= order.userEmail %></p>
+      <p><strong>Status:</strong> <%= order.orderStatus %></p>
+      <p><strong>Total:</strong> ₱<%= Number(order.totalAmount).toFixed(2) %></p>
+      <p><strong>Created At:</strong> <%= order.createdAt.toLocaleString() %></p>
+
+      <h2>Items</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td>₱<%= Number(item.price).toFixed(2) %></td>
+              <td><%= item.quantity %></td>
+              <td>₱<%= Number(item.subtotal).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html>

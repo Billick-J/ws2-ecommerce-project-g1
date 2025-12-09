@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/users/dashboard">Dashboard</a>
+        <a href="/users/logout">Logout</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h1>Admin - Orders</h1>
+
+      <% if (!orders || orders.length === 0) { %>
+        <p>No orders have been placed yet.</p>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer Email</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td><%= order.orderId %></td>
+                <td><%= order.userEmail %></td>
+                <td>₱<%= Number(order.totalAmount).toFixed(2) %></td>
+                <td><%= order.orderStatus %></td>
+                <td>
+                  <% if (order.createdAt && order.createdAt.toLocaleString) { %>
+                    <%= order.createdAt.toLocaleString() %>
+                  <% } else { %>
+                    <%= order.createdAt %>
+                  <% } %>
+                </td>
+                <td>
+                <a href="/admin/orders/<%= order.orderId %>">View Details</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <footer class="footer">
+      <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>
+    </footer>
+  </div>
+</body>
+</html>
