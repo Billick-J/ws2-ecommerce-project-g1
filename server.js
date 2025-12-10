@@ -18,6 +18,13 @@ const multer = require("multer");
 require("dotenv").config();
 
 const app = express();
+
+// DEBUG: log every incoming request path/method
+app.use((req, res, next) => {
+  console.log(`[REQ] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 const PORT = process.env.PORT || 3000;
 
 // -------------------------
@@ -90,28 +97,17 @@ app.set("view engine", "ejs");
 
 
 const ordersRoute = require("./routes/orders");
+console.log("ordersRoute type:", typeof ordersRoute, "isRouter?", !!(ordersRoute && ordersRoute.stack));
+if (typeof ordersRoute !== "function") {
+  console.error("ordersRoute is not a function — check module.exports in routes/orders.js");
+}
 app.use("/orders", ordersRoute);
-// -------------------------
-// MULTER CONFIG
-// -------------------------
-const uploadStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "public", "uploads"));
-  },
-  filename: function (req, file, cb) {
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage: uploadStorage });
-app.locals.upload = upload;
 
-// -------------------------
-// ROUTES
-// -------------------------
-
-// Admin Orders Route
 const adminOrdersRoute = require("./routes/adminOrders");
+console.log("adminOrdersRoute type:", typeof adminOrdersRoute, "isRouter?", !!(adminOrdersRoute && adminOrdersRoute.stack));
+if (typeof adminOrdersRoute !== "function") {
+  console.error("adminOrdersRoute is not a function — check module.exports in routes/adminOrders.js");
+}
 app.use("/admin/orders", adminOrdersRoute);
 
 const indexRoute = require("./routes/index");
@@ -123,6 +119,14 @@ app.use("/", indexRoute);
 app.use("/users", usersRoute);
 app.use("/admin", adminRoute);
 app.use("/password", passwordRoute);
+
+//mount cart route (before 404/error handlers)
+const cartRoute = require("./routes/cart");
+console.log("cartRoute type:", typeof cartRoute, "isRouter?", !!(cartRoute && cartRoute.stack));
+if (typeof cartRoute !== "function") {
+  console.error("cartRoute is not a function — check module.exports in routes/cart.js");
+}
+app.use("/cart", cartRoute);
 
 // -------------------------
 // HEALTH & TEST ROUTES
@@ -183,4 +187,6 @@ async function main() {
     process.exit(1);
   }
 }
+
+
 main();

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <meta charset="UTF-8" />
+</head>
+<body>
+  <div class="container">
+    <h1>Thank you for your order!</h1>
+    <p>Your order ID: <%= order.orderId %></p>
+    <p>Total: ₱<%= Number(order.totalAmount).toFixed(2) %></p>
+    <p>Status: <%= order.orderStatus %></p>
+
+    <h2>Items</h2>
+    <ul>
+      <% order.items.forEach(item => { %>
+        <li><%= item.quantity %> × <%= item.name %> (₱<%= item.subtotal.toFixed(2) %>)</li>
+      <% }) %>
+    </ul>
+
+    <a href="/products">Continue Shopping</a>
+  </div>
+</body>
+</html>

@@ -16,17 +16,29 @@ router.get("/test-protected", requireLogin, (req, res) => {
   res.send("You are logged in. Protected route works.");
 });
 
+// GET /orders/confirmation/:orderId – order confirmation page
+router.get("/confirmation/:orderId", requireLogin, async (req, res) => {
+  const db = req.app.locals.client.db(req.app.locals.dbName);
+  const ordersCollection = db.collection("orders");
+
+  const order = await ordersCollection.findOne({ orderId: req.params.orderId });
+  if (!order) return res.status(404).send("Order not found.");
+
+  // match your actual file: order-confirmations.ejs (plural)
+  res.render("order-confirmations", { title: "Order Confirmation", order });
+});
+
 
 // POST /orders/checkout – create a new order
 router.post("/checkout", requireLogin, async (req, res) => {
-    console.log("Session user:", req.session.user);
   try {
     const db = req.app.locals.client.db(req.app.locals.dbName);
     const productsCollection = db.collection("products");
     const ordersCollection = db.collection("orders");
     const user = req.session.user;
 
-    const itemsFromClient = req.body.items || [];
+    // Use items from body OR session cart
+    const itemsFromClient = req.body.items ? JSON.parse(req.body.items) : req.session.cart || [];
     if (!Array.isArray(itemsFromClient) || itemsFromClient.length === 0) {
       return res.status(400).send("No items provided for checkout.");
     }
@@ -53,7 +65,7 @@ router.post("/checkout", requireLogin, async (req, res) => {
     const now = new Date();
 
     const newOrder = {
-      orderId: uuidv4(),
+      orderId: require("uuid").v4(),
       userId: user.userId,
       userEmail: user.email,
       items: orderItems,
@@ -64,15 +76,16 @@ router.post("/checkout", requireLogin, async (req, res) => {
     };
 
     await ordersCollection.insertOne(newOrder);
-    res.send("Order placed successfully.");
+
+    // Clear cart after checkout
+    req.session.cart = [];
+    req.session.save(() => {
+      res.redirect(`/orders/confirmation/${newOrder.orderId}`);
+    });
   } catch (err) {
     console.error("Error during checkout:", err);
     res.status(500).send("Error placing order.");
   }
-});
-
-router.get("/test-form", (req, res) => {
-  res.render("testCheckout", { title: "Test Checkout" });
 });
 
 module.exports = router;

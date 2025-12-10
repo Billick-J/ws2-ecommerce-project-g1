@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Your Cart</h1>
+
+    <% if (!cart || cart.length === 0) { %>
+      <p>Your cart is empty.</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cart.forEach(item => { %>
+            <tr>
+              <td><%= item.productId %></td>
+              <td><%= item.quantity %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <form action="/orders/checkout" method="post">
+        <input type="hidden" name="items" value='<%= JSON.stringify(cart) %>' />
+        <button type="submit">Proceed to Checkout</button>
+      </form>
+    <% } %>
+  </div>
+</body>
+</html>
