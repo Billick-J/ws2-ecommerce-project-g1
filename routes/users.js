@@ -96,10 +96,8 @@ router.post('/register', async (req, res) => {
 
 // ----- GET Login -----
 router.get('/login', (req, res) => {
-  res.render('login', { 
-    title: "Login",
-    session: req.session  // add this line
-  });
+  if (req.session.user) return res.redirect('/user/dashboard');
+  res.render('login', { title: "Login", message: null });
 });
 
 // ----- POST Login -----
