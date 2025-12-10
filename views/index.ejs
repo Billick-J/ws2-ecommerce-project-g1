@@ -6,24 +6,24 @@
 </head>
 <body>
   <div class="container">
-    <!-- Navigation Bar -->
-    <header class="header">
-      <div class="brand">Nemy's Gunpla & Collectibles</div>
-      <nav class="nav">
-        <a href="/">Home</a>
-        <a href="/products">Products</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
 
-        <% if (!user) { %>
-          <a href="/users/login">Login</a>
-          <a href="/users/register">Register</a>
-        <% } else { %>
-          <a href="/users/dashboard">Dashboard</a>
-          <a href="/users/logout">Logout</a>
-        <% } %>
-      </nav>
-    </header>
+    <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+
+      <% if (!user) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+        <a href="/user/dashboard">Dashboard</a>
+        <a href="/users/logout">Logout</a>
+      <% } %>
+    </nav>
+  </header>
 
     <!-- Welcome Section -->
     <section class="card" style="text-align:center; margin-bottom:20px;">
@@ -40,7 +40,7 @@
             <a href="/products/<%= p._id %>" class="product-link">
               <div class="image">
                 <img src="<%= (p.images && p.images.length > 0) ? p.images[0] : '/images/default-product.jpeg' %>" 
-     alt="<%= p.name %>" style="max-height:120px">
+                     alt="<%= p.name %>" style="max-height:120px">
               </div>
               <h3><%= p.name %></h3>
               <strong>₱<%= p.price %></strong>

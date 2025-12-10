@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const session = require("express-session");
@@ -14,7 +13,6 @@ try {
 const path = require("path");
 const helmet = require("helmet");
 const compression = require("compression");
-const multer = require("multer");
 require("dotenv").config();
 
 const app = express();
@@ -56,7 +54,7 @@ app.use(session({
   }
 }));
 
-// expose session to views + debug
+// expose session to views
 app.use((req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("Session user:", req.session?.user);
@@ -94,38 +92,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-
-const ordersRoute = require("./routes/orders");
-console.log("ordersRoute type:", typeof ordersRoute, "isRouter?", !!(ordersRoute && ordersRoute.stack));
-if (typeof ordersRoute !== "function") {
-  console.error("ordersRoute is not a function — check module.exports in routes/orders.js");
-}
-app.use("/orders", ordersRoute);
-
-const adminOrdersRoute = require("./routes/adminOrders");
-console.log("adminOrdersRoute type:", typeof adminOrdersRoute, "isRouter?", !!(adminOrdersRoute && adminOrdersRoute.stack));
-if (typeof adminOrdersRoute !== "function") {
-  console.error("adminOrdersRoute is not a function — check module.exports in routes/adminOrders.js");
-}
-app.use("/admin/orders", adminOrdersRoute);
-
+// -------------------------
+// ROUTES
+// -------------------------
 const indexRoute = require("./routes/index");
 const usersRoute = require("./routes/users");
 const adminRoute = require("./routes/admin");
 const passwordRoute = require("./routes/password");
+const userRoutes = require("./routes/userDashboard");
+const ordersRoute = require("./routes/orders");
+const adminOrdersRoute = require("./routes/adminOrders");
+const cartRoute = require("./routes/cart");
 
 app.use("/", indexRoute);
 app.use("/users", usersRoute);
 app.use("/admin", adminRoute);
 app.use("/password", passwordRoute);
-
-//mount cart route (before 404/error handlers)
-const cartRoute = require("./routes/cart");
-console.log("cartRoute type:", typeof cartRoute, "isRouter?", !!(cartRoute && cartRoute.stack));
-if (typeof cartRoute !== "function") {
-  console.error("cartRoute is not a function — check module.exports in routes/cart.js");
-}
+app.use("/user", userRoutes);
+app.use("/orders", ordersRoute);
+app.use("/admin/orders", adminOrdersRoute);
 app.use("/cart", cartRoute);
 
 // -------------------------
@@ -187,6 +174,5 @@ async function main() {
     process.exit(1);
   }
 }
-
 
 main();

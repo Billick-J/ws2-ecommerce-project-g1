@@ -24,7 +24,6 @@ router.get("/confirmation/:orderId", requireLogin, async (req, res) => {
   const order = await ordersCollection.findOne({ orderId: req.params.orderId });
   if (!order) return res.status(404).send("Order not found.");
 
-  // match your actual file: order-confirmations.ejs (plural)
   res.render("order-confirmations", { title: "Order Confirmation", order });
 });
 

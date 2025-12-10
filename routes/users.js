@@ -96,8 +96,10 @@ router.post('/register', async (req, res) => {
 
 // ----- GET Login -----
 router.get('/login', (req, res) => {
-  if (req.session.user) return res.redirect('/users/dashboard');
-  res.render('login', { title: "Login", message: null });
+  res.render('login', { 
+    title: "Login",
+    session: req.session  // add this line
+  });
 });
 
 // ----- POST Login -----
@@ -139,19 +141,13 @@ router.post('/login', async (req, res) => {
       console.error("Session save error:", err);
       return res.status(500).send("Could not save session.");
     }
-    res.redirect('/users/dashboard');
+    res.redirect('/user/dashboard');
   });
 
   } catch (err) {
     console.error("Login error:", err);
     res.render('login', { title: "Login", message: "Something went wrong." });
   }
-});
-
-// ----- GET Dashboard -----
-router.get('/dashboard', (req, res) => {
-  if (!req.session.user) return res.redirect('/users/login');
-  res.render('dashboard', { title: "Dashboard", user: req.session.user });
 });
 
 // ----- GET Logout -----

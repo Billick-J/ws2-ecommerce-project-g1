@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .edit-btn-card {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #1a73e8;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-btn-card:hover { background-color: #1669c1; }
+    .info-row {
+      display: flex;
+      margin-bottom: 12px;
+    }
+    .info-label { width: 150px; font-weight: bold; }
+    .info-value, input, textarea { flex-grow: 1; margin-left: 10px; }
+    input, textarea {
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .btn { 
+      background-color: #1a73e8; 
+      color: white; 
+      padding: 6px 12px; 
+      border-radius: 4px; 
+      border: none; 
+      cursor: pointer; 
+      margin-right: 10px; 
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover { background-color: #1669c1; }
+    .success-msg { color: green; font-weight: bold; margin-bottom: 15px; }
+    .quick-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+    }
+  </style>
+  <script src="/js/user-profile.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <% if (!user) { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
+    </header>
+
+    <!-- User Profile Card -->
+    <section class="card" id="account-card">
+      <h1>User Profile</h1>
+
+      <% if (updated) { %>
+        <p class="success-msg">Profile updated successfully.</p>
+      <% } %>
+
+      <button class="edit-btn-card" id="edit-info-btn">Edit Information</button>
+
+      <form id="account-form" action="/user/profile" method="POST" style="display:none; margin-top: 20px;">
+        <div class="info-row">
+          <span class="info-label">Email:</span>
+          <input type="email" name="email" value="<%= user.email %>" readonly>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Name:</span>
+          <input type="text" name="firstName" value="<%= user.firstName || "" %>" required>
+          <input type="text" name="lastName" value="<%= user.lastName || "" %>">
+        </div>
+        <div class="info-row">
+          <span class="info-label">Address:</span>
+          <textarea name="address" rows="2"><%= user.address || "" %></textarea>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Contact Number:</span>
+          <input type="text" name="contactNumber" value="<%= user.contactNumber || "" %>">
+        </div>
+        <div style="margin-top: 15px;">
+          <button type="submit" class="btn">Save Changes</button>
+          <button type="button" class="btn" id="cancel-edit-btn">Cancel</button>
+        </div>
+      </form>
+
+      <div id="display-info" style="margin-top: 20px;">
+        <div class="info-row"><span class="info-label">Email:</span><span class="info-value"><%= user.email %></span></div>
+        <div class="info-row"><span class="info-label">Name:</span><span class="info-value"><%= user.firstName || "" %> <%= user.lastName || "" %></span></div>
+        <div class="info-row"><span class="info-label">Address:</span><span class="info-value"><%= user.address || "" %></span></div>
+        <div class="info-row"><span class="info-label">Contact Number:</span><span class="info-value"><%= user.contactNumber || "" %></span></div>
+      </div>
+    </section>
+
+    <!-- Quick Links Card -->
+    <section class="card">
+      <h2>Quick Links</h2>
+      <div class="quick-links">
+        <a href="/user/dashboard" class="btn">Dashboard</a>
+        <a href="/user/orders" class="btn">My Orders</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>
+    </footer>
+  </div>
+</body>
+</html>

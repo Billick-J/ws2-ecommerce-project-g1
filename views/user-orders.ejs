@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1, h2 { margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { padding: 8px; text-align: left; border: 1px solid #ccc; }
+    th { background-color: #f2f2f2; }
+    .status-section { margin-bottom: 30px; }
+    a.btn {
+      text-decoration: none;
+      color: #fff;
+      background-color: #1a73e8;
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    a.btn:hover { background-color: #1669c1; }
+    /* Row highlight colors for each status */
+    .to_pay { background-color: #fff7e6; }       /* Light orange */
+    .to_ship { background-color: #e6f0ff; }      /* Light blue */
+    .to_receive { background-color: #e6ffe6; }   /* Light green */
+    .completed { background-color: #f0f0f0; }    /* Gray */
+    .refund { background-color: #ffe6e6; }       /* Light red */
+    .cancelled { background-color: #f9d6d6; }    /* Slightly darker red */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <% if (!user) { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
+    </header>
+
+    <!-- Orders Card -->
+    <section class="card">
+      <h1>My Orders</h1>
+      <div style="margin-top:10px; margin-bottom:20px;">
+        <a href="/user/dashboard" class="btn">Dashboard</a>
+        <a href="/user/profile" class="btn">My Profile</a>
+      </div>
+
+      <% const statusLabels = {
+        to_pay: "To Pay",
+        to_ship: "To Ship",
+        to_receive: "To Receive",
+        completed: "Completed",
+        refund: "Return / Refund",
+        cancelled: "Cancelled"
+      }; %>
+
+      <% for (let key in ordersByStatus) { %>
+        <section class="status-section">
+          <h2><%= statusLabels[key] %></h2>
+          <% if (ordersByStatus[key].length === 0) { %>
+            <p>No orders in this status.</p>
+          <% } else { %>
+            <table>
+              <tr>
+                <th>Order ID</th>
+                <th>Total Amount</th>
+                <th>Created At</th>
+              </tr>
+              <% ordersByStatus[key].forEach(order => { %>
+                <tr class="<%= key %>">
+                  <td><%= order.orderId %></td>
+                  <td>₱<%= Number(order.totalAmount).toFixed(2) %></td>
+                  <td>
+                    <% if (order.createdAt && order.createdAt.toLocaleString) { %>
+                      <%= order.createdAt.toLocaleString() %>
+                    <% } else { %>
+                      <%= order.createdAt %>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </table>
+          <% } %>
+        </section>
+      <% } %>
+    </section>
+
+    <footer class="footer">
+      <a href="#">Terms & Conditions</a> · <a href="#">Privacy Policy</a>
+    </footer>
+  </div>
+</body>
+</html>

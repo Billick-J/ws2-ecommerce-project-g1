@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Card container styling for main content sections */
+    .card {
+      background: #fff;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Table styling for order summary */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    table th {
+      background: #f4f4f4;
+      font-weight: bold;
+    }
+
+    /* Status highlights */
+    .status-to_pay { background-color: #fff3cd; }      /* yellow */
+    .status-to_ship { background-color: #cce5ff; }     /* blue */
+    .status-to_receive { background-color: #e2e3e5; }  /* gray */
+    .status-completed { background-color: #d4edda; }   /* green */
+    .status-refund { background-color: #f8d7da; }      /* red */
+    .status-cancelled { background-color: #f5c6cb; }   /* pink/red */
+
+    /* Buttons for quick links */
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      margin-top: 10px;
+      background-color: #1a73e8;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background-color: #155cb0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header / Nav (unstyled here, uses main site CSS) -->
+    <header class="header">
+      <div class="brand">Nemy's Gunpla & Collectibles</div>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <% if (!user) { %>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
+    </header>
+
+    <!-- Greeting -->
+    <section class="card">
+      <h1>Welcome, <%= user.firstName || user.email %>!</h1>
+      <p>Email: <%= user.email %></p>
+      <p>Role: <%= user.role %></p>
+    </section>
+
+    <!-- Order Summary Table -->
+    <section class="card">
+      <h2>Order Summary</h2>
+      <p>Total Orders: <strong><%= totalOrders %></strong></p>
+      <table>
+        <tr>
+          <th>Status</th>
+          <th>Count</th>
+        </tr>
+        <tr class="status-to_pay">
+          <td>To Pay</td>
+          <td><%= statusCounts.to_pay %></td>
+        </tr>
+        <tr class="status-to_ship">
+          <td>To Ship</td>
+          <td><%= statusCounts.to_ship %></td>
+        </tr>
+        <tr class="status-to_receive">
+          <td>To Receive</td>
+          <td><%= statusCounts.to_receive %></td>
+        </tr>
+        <tr class="status-completed">
+          <td>Completed</td>
+          <td><%= statusCounts.completed %></td>
+        </tr>
+        <tr class="status-refund">
+          <td>Return / Refund</td>
+          <td><%= statusCounts.refund %></td>
+        </tr>
+        <tr class="status-cancelled">
+          <td>Cancelled</td>
+          <td><%= statusCounts.cancelled %></td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="card">
+      <h2>Quick Links</h2>
+      <a href="/user/profile" class="btn" style="margin-right:12px;">My Profile</a>
+      <a href="/user/orders" class="btn">My Orders</a>
+    </section>
+  </div>
+</body>
+</html>

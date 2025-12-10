@@ -1,12 +1,10 @@
 // middleware/requireLogin.js
 function requireLogin(req, res, next) {
-  console.log("requireLogin check:", req.session); // <-- log before the check
-
-  if (!req.session || !req.session.user) {
-    // You can change this to res.redirect("/users/login") later
-    return res.status(401).send("You must be logged in to access this page.");
+  if (!req.session?.user) {
+    // Set a flash message in the session
+    req.session.flash = { type: "error", message: "Please log in to access this page." };
+    return res.redirect("/users/login"); // correct login path
   }
-
   next();
 }
 

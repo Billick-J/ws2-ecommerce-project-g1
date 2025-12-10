@@ -15,7 +15,11 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error("Failed to load home page products:", err);
-    res.render('index', { title: "Nemy's Gunpla & Collectibles", user: req.session.user || null, products: [] });
+    res.render('index', { 
+      title: "Nemy's Gunpla & Collectibles", 
+      user: req.session.user || null, 
+      products: [] 
+    });
   }
 });
 
