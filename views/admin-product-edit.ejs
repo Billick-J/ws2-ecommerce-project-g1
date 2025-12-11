@@ -36,6 +36,10 @@
       <nav class="nav">
         <a href="/">Home</a>
         <a href="/products">Products</a>
+        <% if (user && user.role === "customer") { %>
+          <a href="/cart">Cart</a>
+        <% } %>
+        
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
         <% if (!user) { %>

@@ -28,25 +28,30 @@
     <header class="header">
       <div class="brand"><%= name %></div>
       <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/products">Products</a>
-      <a href="/about">About</a>
-      <a href="/contact">Contact</a>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
 
-      <% if (!user) { %>
-        <a href="/users/login">Login</a>
-        <a href="/users/register">Register</a>
-      <% } else { %>
-
-        <% if (user.role === "admin") { %>
-          <a href="/admin">Admin</a>
-        <% } else { %>
-          <a href="/user/dashboard">Dashboard</a>
+        <% if (user && user.role === "customer") { %>
+          <a href="/cart">Cart</a>
         <% } %>
+        
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
 
-        <a href="/users/logout">Logout</a>
-      <% } %>
-    </nav>
+        <% if (!user) { %>
+          <a href="/users/login">Login</a>
+          <a href="/users/register">Register</a>
+        <% } else { %>
+
+          <% if (user.role === "admin") { %>
+            <a href="/admin">Admin</a>
+          <% } else { %>
+            <a href="/user/dashboard">Dashboard</a>
+          <% } %>
+
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
     </header>
 
     <!-- About Info -->

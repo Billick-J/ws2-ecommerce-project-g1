@@ -115,24 +115,27 @@
 
 <header class="header">
   <div class="brand">Nemy's Gunpla & Collectibles</div>
-  <nav class="nav">
-    <a href="/">Home</a>
-    <a href="/products">Products</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
-
-    <% if (!user) { %>
-      <a href="/users/login">Login</a>
-      <a href="/users/register">Register</a>
-    <% } else { %>
-      <% if (user.role === "admin") { %>
-        <a href="/admin">Admin</a>
-      <% } else { %>
-        <a href="/user/dashboard">Dashboard</a>
-      <% } %>
-      <a href="/users/logout">Logout</a>
-    <% } %>
-  </nav>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <% if (user && user.role === "customer") { %>
+          <a href="/cart">Cart</a>
+        <% } %>
+        
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <% if (!user) { %>
+          <a href="/users/login">Login</a>
+          <a href="/users/register">Register</a>
+        <% } else { %>
+          <% if (user.role === "admin") { %>
+            <a href="/admin">Admin</a>
+          <% } else { %>
+            <a href="/user/dashboard">Dashboard</a>
+          <% } %>
+          <a href="/users/logout">Logout</a>
+        <% } %>
+      </nav>
 </header>
 
 <div class="container">
