@@ -58,10 +58,13 @@ app.use(session({
 app.use((req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("Session user:", req.session?.user);
+  res.locals.session = req.session;
   res.locals.user = req.session?.user || null;
   res.locals.req = req;
   next();
 });
+
+
 
 // trust proxy
 app.set("trust proxy", 1);

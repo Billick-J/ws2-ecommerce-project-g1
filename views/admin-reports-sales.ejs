@@ -57,19 +57,57 @@
     .summary-card h3 { font-size: 13px; margin-bottom: 5px; color: #666; }
     .summary-card p { font-size: 18px; font-weight: bold; margin: 0; }
 
-    /* Chart container */
     .chart-container {
-      background: white;
-      padding: 20px;
-      border-radius: var(--radius);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      margin-top: 25px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    margin-top: 25px;
+
+    /* let Chart.js handle height */
+    height: auto;
+    position: relative; /* required for responsive chart */
+    }
+
+    #salesChartCanvas {
+    width: 100% !important;
+    height: 300px !important; /* fixed visible height */
+    display: block;
     }
 
     @media (max-width: 768px) {
       .filters-row { flex-direction: column; gap: 15px; }
       .filters-buttons { justify-content: flex-start; }
     }
+
+    @media print {
+    .no-print, .header, .nav { display: none !important; }
+
+    body { margin: 10mm; font-family: Arial, sans-serif; }
+
+    section { margin-bottom: 12px; }
+
+    h1 { font-size: 20px; }
+    h2 { font-size: 16px; }
+
+    table th, table td {
+        border: 1px solid #999 !important;
+        padding: 6px !important;
+    }
+
+    table tr:nth-child(even) td { background-color: #f9f9f9 !important; }
+    table th { background-color: #ddd !important; }
+    table, tr, td, th { page-break-inside: avoid; }
+
+    #salesChartCanvas {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 250px !important;
+    }
+
+    .summary-cards { flex-direction: column; gap: 10px; }
+    }
+
   </style>
 </head>
 
@@ -98,21 +136,40 @@
 </header>
 
 <div class="container">
-
   <div class="admin-card">
     <h1>Sales Overview</h1>
     <div class="admin-subtitle">Track sales per day, total orders, and revenue trends.</div>
 
     <!-- Admin Nav -->
-    <div class="admin-nav">
+    <div class="admin-nav no-print">
       <a href="/admin/products">Manage Products</a>
       <a href="/admin/orders">Manage Orders</a>
       <a href="/admin/reports/sales">View Sales Reports</a>
       <a href="/">Back to Shop</a>
     </div>
 
+    <!-- Report Actions -->
+    <section class="no-print" style="margin-bottom: 15px;">
+      <h2>Report Actions</h2>
+      <p>
+        <a href="/admin/reports/sales/export/daily?startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>&status=<%= filters.status %>">
+          Download Daily Sales (XLSX)
+        </a>
+      </p>
+      <p>
+        <a href="/admin/reports/sales/export/orders?startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>&status=<%= filters.status %>">
+          Download Detailed Orders (XLSX)
+        </a>
+      </p>
+
+      <p>
+        <button type="button" id="printBtn">Print / Save as PDF</button>
+      </p>
+
+    </section>
+
     <!-- Filters -->
-    <section>
+    <section class="no-print">
       <h2>Filters</h2>
       <form action="/admin/reports/sales" method="GET">
         <div class="filters-row">
@@ -142,6 +199,28 @@
           </div>
         </div>
       </form>
+    </section>
+
+    <!-- Filter Summary -->
+    <section>
+      <h2>Current Filter Summary</h2>
+      <% if (!filters.startDate && !filters.endDate && filters.status === 'all') { %>
+        <p>Showing all orders for all dates and all statuses.</p>
+      <% } else { %>
+        <p>
+          Showing orders
+          <% if (filters.status === 'all') { %>with all statuses<% } else { %>with status "<%= filters.status %>"<% } %>
+          <% if (filters.startDate && filters.endDate) { %>
+            from <%= filters.startDate %> to <%= filters.endDate %>.
+          <% } else if (filters.startDate) { %>
+            from <%= filters.startDate %> onwards.
+          <% } else if (filters.endDate) { %>
+            up to <%= filters.endDate %>.
+          <% } else { %>
+            for all dates.
+          <% } %>
+        </p>
+      <% } %>
     </section>
 
     <!-- Summary Section -->
@@ -188,15 +267,16 @@
 
     <!-- Sales Chart -->
     <section class="chart-container">
-      <h2>Sales Chart</h2>
-      <% if (dailySales.length === 0) { %>
-        <p>No sales data to chart.</p>
-      <% } else { %>
-        <canvas id="salesChartCanvas" width="600" height="300"
-          data-labels='<%- JSON.stringify(labels) %>'
-          data-sales='<%- JSON.stringify(salesData) %>'></canvas>
-      <% } %>
+        <h2>Sales Chart</h2>
+        <% if (dailySales.length === 0) { %>
+            <p>No sales data to chart.</p>
+        <% } else { %>
+            <canvas id="salesChartCanvas"
+            data-labels='<%- JSON.stringify(labels) %>'
+            data-sales='<%- JSON.stringify(salesData) %>'></canvas>
+        <% } %>
     </section>
+
 
   </div>
 

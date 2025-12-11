@@ -2,4 +2,5 @@
 2. npm install uuid@8.3.2
 3. npm install multer
 4. npm install connect-mongo
-5. node server.js
+5. npm install exceljs
+6. node server.js
