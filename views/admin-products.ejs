@@ -158,6 +158,22 @@
       background-color: #ddd;
     }
 
+    .alert-success {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid green;
+      background-color: #e6ffed;
+      color: green;
+    }
+
+    .alert-error {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid red;
+      background-color: #ffe6e6;
+      color: red;
+    }
+
 
     /* Responsive adjustments */
     @media (max-width: 1200px) {
@@ -177,14 +193,9 @@
 <body>
   <div class="container">
     <% if (message) { %>
-    <div style="
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid <%= message.type === 'success' ? 'green' : 'red' %>;
-        background-color: <%= message.type === 'success' ? '#e6ffed' : '#ffe6e6' %>;
-        color: <%= message.type === 'success' ? 'green' : 'red' %>">
+      <div class="<%= message.type === 'success' ? 'alert-success' : 'alert-error' %>">
         <%= message.text %>
-    </div>
+      </div>
     <% } %>
 
     <header class="header">
