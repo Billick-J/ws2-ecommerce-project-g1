@@ -141,7 +141,13 @@ router.post('/login', async (req, res) => {
       console.error("Session save error:", err);
       return res.status(500).send("Could not save session.");
     }
-    res.redirect('/user/dashboard');
+    // Redirect based on role
+    if (user.role === "admin") {
+      return res.redirect('/admin');
+    } else {
+      return res.redirect('/user/dashboard');
+    }
+
   });
 
   } catch (err) {

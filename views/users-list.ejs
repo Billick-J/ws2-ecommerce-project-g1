@@ -1,7 +1,30 @@
 <!DOCTYPE html>
-<html><head><title><%= title %></title><link rel="stylesheet" href="/css/style.css"></head><body>
-<div class="container"><h2>Users</h2><div class="card"><table style="width:100%"><thead><tr><th>ID</th><th>Name</th><th>Email</th></tr></thead><tbody>
-<% users.forEach(u=>{ %>
-<tr><td><%= u.userId %></td><td><%= u.firstName %> <%= u.lastName %></td><td><%= u.email %></td></tr>
-<% }) %>
-</tbody></table></div></div></body></html>
+<html>
+    <head>
+        <title><%= title %></title><link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <h2>Users</h2>
+            <div class="card"><table style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                    <tbody>
+                    <% users.forEach(u=>{ %>
+                    <tr>
+                        <td><%= u.userId %></td>
+                        <td><%= u.firstName %> <%= u.lastName %></td>
+                        <td><%= u.email %></td>
+                    </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    /* Unified Admin Card */
+    .admin-card {
+      background: #ffd54a;
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-top: 25px;
+    }
+
+    .admin-card h1 {
+      margin-bottom: 5px;
+    }
+
+    .admin-subtitle {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    /* Admin Action Buttons */
+    .admin-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .admin-nav a {
+      padding: 10px 16px;
+      background: var(--brand);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+
+    .admin-nav a:hover {
+      opacity: 0.85;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+    }
+
+    th {
+      background: #f5f5f5;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover td {
+      background: #fafafa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar (same as all other pages) -->
+  <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+
+      <% if (!user) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+
+        <% if (user.role === "admin") { %>
+          <a href="/admin">Admin</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+        <% } %>
+
+        <a href="/users/logout">Logout</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <!-- Unified Admin Card -->
+    <div class="admin-card">
+
+      <h1>Admin Dashboard</h1>
+      <div class="admin-subtitle">Manage products, orders, and users.</div>
+
+      <!-- Admin Action Buttons -->
+      <div class="admin-nav">
+        <a href="/admin/products">Manage Products</a>
+        <a href="/admin/orders">Manage Orders</a>
+        <a href="/">Back to Shop</a>
+      </div>
+
+      <h3>All Users</h3>
+
+      <!-- Users Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td><%= u.userId %></td>
+              <td><%= u.firstName %> <%= u.lastName %></td>
+              <td><%= u.email %></td>
+              <td><%= u.role %></td>
+              <td><%= u.accountStatus %></td>
+              <td><%= new Date(u.createdAt).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+    </div>
+
+    <footer class="footer">
+      <a href="#">Terms & Conditions</a> · 
+      <a href="#">Privacy Policy</a>
+    </footer>
+
+  </div>
+
+</body>
+</html>

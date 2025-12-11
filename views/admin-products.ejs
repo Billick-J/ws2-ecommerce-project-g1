@@ -3,9 +3,190 @@
 <head>
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    /* Admin Buttons */
+    .admin-btn-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn-left a,
+    .admin-btn-right a {
+      padding: 10px 16px;
+      background: var(--brand);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+
+    .admin-btn-left a:hover,
+    .admin-btn-right a:hover {
+      opacity: 0.85;
+    }
+
+    .admin-btn-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Products Grid - 5 per row */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .products .product {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .products .product img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .products .product h3 {
+      margin: 0 0 6px 0;
+      font-size: 16px;
+    }
+
+    .products .product p {
+      flex-grow: 1;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .products .product strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .products .product .actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .products .product .btn {
+      padding: 6px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 13px;
+      color: white;
+      text-align: center;
+    }
+
+    .products .product .btn-edit {
+      background-color: #1a73e8;
+    }
+
+    .products .product .btn-edit:hover {
+      opacity: 0.85;
+    }
+
+    .products .product .btn-delete {
+      background-color: #d33;
+      border: none;
+      cursor: pointer;
+    }
+
+    .products .product .btn-delete:hover {
+      opacity: 0.85;
+    }
+
+        /* Search Form */
+    form#product-search {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    form#product-search label {
+      font-weight: bold;
+    }
+
+    form#product-search input,
+    form#product-search select {
+      padding: 5px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    form#product-search button,
+    form#product-search a {
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    form#product-search button {
+      background-color: var(--brand);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form#product-search button:hover {
+      opacity: 0.85;
+    }
+
+    form#product-search a {
+      background-color: #eee;
+      color: #333;
+    }
+
+    form#product-search a:hover {
+      background-color: #ddd;
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .products {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .products {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div class="container">
+    <% if (message) { %>
+    <div style="
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid <%= message.type === 'success' ? 'green' : 'red' %>;
+        background-color: <%= message.type === 'success' ? '#e6ffed' : '#ffe6e6' %>;
+        color: <%= message.type === 'success' ? 'green' : 'red' %>">
+        <%= message.text %>
+    </div>
+    <% } %>
+
     <header class="header">
       <div class="brand">Nemy's Gunpla & Collectibles</div>
       <nav class="nav">
@@ -18,7 +199,11 @@
           <a href="/users/login">Login</a>
           <a href="/users/register">Register</a>
         <% } else { %>
-          <a href="/user/dashboard">Dashboard</a>
+          <% if (user.role === "admin") { %>
+            <a href="/admin">Admin</a>
+          <% } else { %>
+            <a href="/user/dashboard">Dashboard</a>
+          <% } %>
           <a href="/users/logout">Logout</a>
         <% } %>
       </nav>
@@ -27,29 +212,57 @@
     <section class="card">
       <h1>Admin: Products</h1>
 
-      <div style="margin-bottom: 12px;">
-        <a href="/admin/products/new" class="btn" style="margin-right: 12px;">Add New Product</a>
-        <a href="/admin" class="btn">View All Users</a>
+      <!-- Buttons -->
+      <div class="admin-btn-container">
+        <div class="admin-btn-left">
+          <a href="/admin/products/new">Add New Product</a>
+        </div>
+        <div class="admin-btn-right">
+          <a href="/admin/orders">View All Orders</a>
+          <a href="/admin">View All Users</a>
+        </div>
       </div>
 
+      <!-- Search Form -->
+      <section style="margin-bottom: 15px;">
+        <form id="product-search" action="/admin/products" method="GET">
+          <label for="searchName">Search by name:</label>
+          <input
+            type="text"
+            id="searchName"
+            name="searchName"
+            value="<%= typeof searchName !== 'undefined' ? searchName : '' %>"
+          />
+          <label for="searchCategory">Category:</label>
+            <select id="searchCategory" name="searchCategory">
+              <option value="">All</option>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat %>" <%= searchCategory === cat ? 'selected' : '' %>><%= cat %></option>
+              <% }) %>
+            </select>
+          <button type="submit">Search</button>
+          <a href="/admin/products">Clear</a>
+        </form>
+      </section>
+
+      <!-- Products Grid -->
       <div class="products">
         <% products.forEach(p => { %>
-          <div class="card product">
-            <div class="image">
-              <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '/images/default-product.jpeg' %>" alt="<%= p.name %>" style="max-height:120px">
-            </div>
+          <div class="product">
+            <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '/images/default-product.jpeg' %>" alt="<%= p.name %>">
             <h3><%= p.name %></h3>
             <p><%= p.desc %></p>
-            <strong><%= p.price %></strong>
-            <div style="margin-top:8px;">
-              <a href="/admin/products/edit/<%= p._id %>" class="btn" style="margin-right:6px;">Edit</a>
+            <strong>₱<%= p.price.toFixed(2) %></strong>
+            <div class="actions">
+              <a href="/admin/products/edit/<%= p._id %>" class="btn btn-edit">Edit</a>
               <form action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background:#d33;">Delete</button>
+                <button type="submit" class="btn btn-delete">Delete</button>
               </form>
             </div>
           </div>
         <% }) %>
       </div>
+
     </section>
 
     <footer class="footer">

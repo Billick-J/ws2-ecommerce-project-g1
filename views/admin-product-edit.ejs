@@ -38,12 +38,15 @@
         <a href="/products">Products</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-
         <% if (!user) { %>
           <a href="/users/login">Login</a>
           <a href="/users/register">Register</a>
         <% } else { %>
-          <a href="/user/dashboard">Dashboard</a>
+          <% if (user.role === "admin") { %>
+            <a href="/admin">Admin</a>
+          <% } else { %>
+            <a href="/user/dashboard">Dashboard</a>
+          <% } %>
           <a href="/users/logout">Logout</a>
         <% } %>
       </nav>
@@ -51,10 +54,34 @@
 
     <section class="card">
       <h1>Edit Product</h1>
+
+      <% if (errors && errors.length > 0) { %>
+        <div style="color:red;margin-bottom:15px;">
+          <p>Please fix the following errors:</p>
+          <ul>
+            <% errors.forEach(err => { %>
+              <li><%= err %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
       <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" class="form-row">
-        <label>Name: <input type="text" name="name" value="<%= product.name %>" required></label>
-        <label>Description: <textarea name="desc" required><%= product.desc %></textarea></label>
-        <label>Price: <input type="text" name="price" value="<%= product.price %>" required></label>
+        <label>Name:
+          <input type="text" name="name" value="<%= formData?.name || product.name %>" required>
+        </label>
+
+        <label>Description:
+          <textarea name="desc" required><%= formData?.desc || product.desc %></textarea>
+        </label>
+
+        <label>Price:
+          <input type="text" name="price" value="<%= formData?.price || product.price %>" required>
+        </label>
+
+        <label>Category:
+          <input type="text" name="category" value="<%= formData?.category || product.category %>" required>
+        </label>
 
         <% if (product.images && product.images.length > 0) { %>
           <div>

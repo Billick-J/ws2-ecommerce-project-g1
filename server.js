@@ -85,6 +85,27 @@ app.use(
 );
 app.use(compression());
 
+
+const multer = require("multer");
+
+// Set up storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "public/uploads"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ storage });
+
+// Make it available to routes
+app.locals.upload = upload;
+
+
 // -------------------------
 // BODY PARSING & STATIC FILES
 // -------------------------
