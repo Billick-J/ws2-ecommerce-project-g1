@@ -5,31 +5,48 @@ const { ObjectId } = require("mongodb");
 
 // Add item to cart
 router.post("/add", async (req, res) => {
-  console.log("POST /cart/add received, body:", req.body); // debug
   const { productId, quantity } = req.body;
-  if (!req.session.cart) req.session.cart = [];
+  const db = req.app.locals.client.db(req.app.locals.dbName);
+  const usersCollection = db.collection("users");
 
-  req.session.cart.push({ productId, quantity: parseInt(quantity, 10) || 1 });
-  req.session.save(() => {
-    res.redirect("/cart"); // or send JSON
-  });
+  if (!req.session.user) return res.status(401).send("Not logged in");
+
+  // Add or update item in user's cart
+  const userId = req.session.user.userId;
+  const user = await usersCollection.findOne({ userId });
+
+  const existingItem = user.cart?.find(c => c.productId === productId);
+
+  if (existingItem) {
+    existingItem.quantity += parseInt(quantity, 10) || 1;
+  } else {
+    if (!user.cart) user.cart = [];
+    user.cart.push({ productId, quantity: parseInt(quantity, 10) || 1 });
+  }
+
+  await usersCollection.updateOne({ userId }, { $set: { cart: user.cart } });
+  res.redirect("/cart");
 });
 
 // Show cart page
 router.get("/", async (req, res) => {
-  try {
-    let cart = req.session.cart || [];
+  if (!req.session.user) return res.status(401).send("Not logged in");
 
-    // if cart is empty, render early
-    if (!cart || cart.length === 0) {
+  try {
+    const db = req.app.locals.client.db(req.app.locals.dbName);
+    const usersCollection = db.collection("users");
+    const productsCollection = db.collection("products");
+
+    const userId = req.session.user.userId;
+    const user = await usersCollection.findOne({ userId });
+
+    const cart = user.cart || [];
+
+    if (!cart.length) {
       return res.render("cart", { title: "Your Cart", cart: [] });
     }
 
     // fetch product details for each cart item
-    const db = req.app.locals.client.db(req.app.locals.dbName);
-    const productsCollection = db.collection("products");
-    const { ObjectId } = require("mongodb");
-
     const enrichedCart = await Promise.all(
       cart.map(async (item) => {
         const product = await productsCollection.findOne({
@@ -52,28 +69,44 @@ router.get("/", async (req, res) => {
 });
 
 // Remove item from cart
-router.post("/remove", (req, res) => {
-  const { productId } = req.body;
-  if (!req.session.cart) req.session.cart = [];
+router.post("/remove", async (req, res) => {
+  if (!req.session.user) return res.status(401).send("Not logged in");
 
-  req.session.cart = req.session.cart.filter(item => item.productId !== productId);
-  req.session.save(() => res.json({ success: true }));
+  const { productId } = req.body;
+  const db = req.app.locals.client.db(req.app.locals.dbName);
+  const usersCollection = db.collection("users");
+
+  const userId = req.session.user.userId;
+  const user = await usersCollection.findOne({ userId });
+
+  if (!user.cart) user.cart = [];
+  user.cart = user.cart.filter(item => item.productId !== productId);
+
+  await usersCollection.updateOne({ userId }, { $set: { cart: user.cart } });
+  res.json({ success: true });
 });
 
 // Update quantity
-router.post("/update-quantity", (req, res) => {
-  const { productId, quantity } = req.body;
-  if (!req.session.cart) req.session.cart = [];
+router.post("/update-quantity", async (req, res) => {
+  if (!req.session.user) return res.status(401).send("Not logged in");
 
-  req.session.cart = req.session.cart.map(item => {
+  const { productId, quantity } = req.body;
+  const db = req.app.locals.client.db(req.app.locals.dbName);
+  const usersCollection = db.collection("users");
+
+  const userId = req.session.user.userId;
+  const user = await usersCollection.findOne({ userId });
+
+  if (!user.cart) user.cart = [];
+  user.cart = user.cart.map(item => {
     if (item.productId === productId) {
       return { ...item, quantity: Math.max(1, parseInt(quantity, 10)) };
     }
     return item;
   });
 
-  req.session.save(() => res.json({ success: true }));
+  await usersCollection.updateOne({ userId }, { $set: { cart: user.cart } });
+  res.json({ success: true });
 });
-
 
 module.exports = router;
