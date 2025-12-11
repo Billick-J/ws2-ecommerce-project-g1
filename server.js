@@ -74,7 +74,12 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://challenges.cloudflare.com"],
+        scriptSrc: [
+          "'self'",
+          "https://cdn.jsdelivr.net",
+          "https://challenges.cloudflare.com"
+        ],
+
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https://challenges.cloudflare.com"],
         frameSrc: ["'self'", "https://challenges.cloudflare.com"],
@@ -83,6 +88,7 @@ app.use(
     }
   })
 );
+
 app.use(compression());
 
 
@@ -126,7 +132,9 @@ const userRoutes = require("./routes/userDashboard");
 const ordersRoute = require("./routes/orders");
 const adminOrdersRoute = require("./routes/adminOrders");
 const cartRoute = require("./routes/cart");
+const adminReportsRoute = require("./routes/adminReports");
 
+app.use("/admin", adminReportsRoute);
 app.use("/", indexRoute);
 app.use("/users", usersRoute);
 app.use("/admin", adminRoute);
