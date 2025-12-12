@@ -3,22 +3,93 @@
 <head>
   <title><%= title %></title>
   <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
+    .card {
+      background: #fff;
+      padding: 25px;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+      margin-top: 25px;
+    }
+    h1 { margin-bottom: 15px; color: var(--brand); }
+    h2 { margin-top: 25px; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    table th, table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    table th { background-color: #f5f5f5; }
+    tr:hover td { background-color: #fafafa; }
+    .cart-total { text-align: right; font-weight: bold; font-size: 18px; margin-top: 10px; }
+    a.btn { display: inline-block; padding: 10px 20px; background: var(--brand); color: #fff; border-radius: 6px; text-decoration: none; font-weight: 500; transition: 0.2s; }
+    a.btn:hover { opacity: 0.85; }
+    .nav { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+    .nav a { text-decoration: none; color: var(--brand); font-weight: 500; }
+  </style>
 </head>
 <body>
+  <!-- NAVIGATION BAR -->
+  <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <% if (order.userRole === "customer") { %>
+        <a href="/cart">Cart</a>
+      <% } %>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <% if (!order.userEmail) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+        <% if (order.userRole === "admin") { %>
+          <a href="/admin">Admin</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+        <% } %>
+        <a href="/users/logout">Logout</a>
+      <% } %>
+    </nav>
+  </header>
+
   <div class="container">
-    <h1>Thank you for your order!</h1>
-    <p>Your order ID: <%= order.orderId %></p>
-    <p>Total: ₱<%= Number(order.totalAmount).toFixed(2) %></p>
-    <p>Status: <%= order.orderStatus %></p>
+    <div class="card">
+      <h1>Thank you for your order!</h1>
 
-    <h2>Items</h2>
-    <ul>
-      <% order.items.forEach(item => { %>
-        <li><%= item.quantity %> × <%= item.name %> (₱<%= item.subtotal.toFixed(2) %>)</li>
-      <% }) %>
-    </ul>
+      <h2>Order Summary</h2>
+      <p><strong>Order ID:</strong> <%= order.orderId %></p>
+      <p><strong>Total:</strong> ₱<%= Number(order.totalAmount).toFixed(2) %></p>
+      <p><strong>Status:</strong> <%= order.orderStatus %></p>
+      <p><strong>Delivery Address:</strong> <%= order.deliveryAddress %></p>
+      <p><strong>Phone:</strong> <%= order.phoneNumber %></p>
+      <p><strong>Payment Method:</strong> <%= order.paymentMethod.toUpperCase() %></p>
 
-    <a href="/products">Continue Shopping</a>
+      <h2>Items</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td>₱<%= item.price.toFixed(2) %></td>
+              <td><%= item.quantity %></td>
+              <td>₱<%= item.subtotal.toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="cart-total">Total: ₱<%= Number(order.totalAmount).toFixed(2) %></div>
+
+      <a href="/products" class="btn">Continue Shopping</a>
+    </div>
   </div>
 </body>
 </html>
