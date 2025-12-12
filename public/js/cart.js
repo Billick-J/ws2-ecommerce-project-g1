@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const itemCheckboxes = Array.from(document.querySelectorAll(".item-checkbox"));
   const totalAmountEl = document.getElementById("totalAmount");
 
-  // Helper: recalc total based on selected items
+  // Recalculate total based on selected items
   const recalcTotal = () => {
     let total = 0;
     document.querySelectorAll(".cart-row").forEach(row => {
@@ -86,26 +86,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Individual checkboxes
   itemCheckboxes.forEach(cb => cb.addEventListener("change", recalcTotal));
 
-  // Before submitting checkout
-  cartForm.addEventListener("submit", (e) => {
-    const allRows = Array.from(document.querySelectorAll(".cart-row"));
-    const selectedItems = allRows.filter(row => row.querySelector(".item-checkbox").checked)
-      .map(row => ({
-        productId: row.querySelector(".item-checkbox").value,
-        quantity: parseInt(row.querySelector(".quantity").textContent, 10)
-      }));
-
-    if (selectedItems.length === 0) {
+  // Proceed to Checkout button
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      alert("Please select at least one item to checkout.");
-      return;
-    }
 
-    // Replace hidden input with updated selected items
-    const hiddenInput = document.createElement("input");
-    hiddenInput.type = "hidden";
-    hiddenInput.name = "items";
-    hiddenInput.value = JSON.stringify(selectedItems);
-    cartForm.appendChild(hiddenInput);
-  });
+      const allRows = Array.from(document.querySelectorAll(".cart-row"));
+      const selectedItems = allRows.filter(row => row.querySelector(".item-checkbox").checked)
+        .map(row => ({
+          productId: row.querySelector(".item-checkbox").value,
+          quantity: parseInt(row.querySelector(".quantity").textContent, 10)
+        }));
+
+      if (selectedItems.length === 0) {
+        alert("Please select at least one item to checkout.");
+        return;
+      }
+
+      // Redirect to /orders/checkout with selected items in query string
+      const params = new URLSearchParams();
+      params.set("items", JSON.stringify(selectedItems));
+      window.location.href = `/orders/checkout?${params.toString()}`;
+    });
+  }
 });

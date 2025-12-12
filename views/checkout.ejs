@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .checkout-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+      margin-top: 25px;
+    }
+    .checkout-card h1 { margin-bottom: 15px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    table th { background-color: #f5f5f5; }
+    tr:hover td { background-color: #fafafa; }
+
+    .cart-total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .checkout-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s;
+      text-decoration: none;
+    }
+    .checkout-btn:hover { opacity: 0.85; }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+
+    /* Optional: small styling for nav spacing */
+    .container { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATION BAR -->
+  <header class="header">
+    <div class="brand">Nemy's Gunpla & Collectibles</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+      <% if (user && user.role === "customer") { %>
+        <a href="/cart">Cart</a>
+      <% } %>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+
+      <% if (!user) { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } else { %>
+        <% if (user.role === "admin") { %>
+          <a href="/admin">Admin</a>
+        <% } else { %>
+          <a href="/user/dashboard">Dashboard</a>
+        <% } %>
+        <a href="/users/logout">Logout</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="checkout-card">
+      <h1>Checkout</h1>
+
+      <% if (!items || items.length === 0) { %>
+        <p>No items selected for checkout.</p>
+      <% } else { %>
+        <form action="/orders/checkout" method="POST">
+          <h2>Selected Items</h2>
+            <table>
+            <thead>
+                <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let total = 0; %>
+                <% items.forEach(item => { %>
+                <% const subtotal = item.price * item.quantity; %>
+                <% total += subtotal; %>
+                <tr>
+                    <td><%= item.name %></td>
+                    <td>₱<%= item.price.toFixed(2) %></td>
+                    <td><%= item.quantity %></td>
+                    <td>₱<%= subtotal.toFixed(2) %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+            </table>
+
+            <!-- Single hidden input for all items -->
+            <input type="hidden" name="items" id="itemsInput" value='<%= JSON.stringify(items.map(i => ({productId: i.productId, quantity: i.quantity}))) %>' />
+
+            <div class="cart-total">Total: ₱<%= total.toFixed(2) %></div>
+
+
+          <h2>Delivery Details</h2>
+          <div class="form-group">
+            <label for="address">Delivery Address</label>
+            <input type="text" id="address" name="address" value="<%= user.address %>" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phoneNumber" value="<%= contactNumber %>" required />
+          </div>
+
+          <div class="form-group">
+            <label for="payment">Payment Method</label>
+            <select id="payment" name="payment" required>
+              <option value="cod">Cash on Delivery</option>
+              <option value="cop">Cash on Pickup</option>
+            </select>
+          </div>
+
+          <button type="submit" class="checkout-btn">Place Order</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

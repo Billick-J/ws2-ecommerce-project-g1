@@ -27,64 +27,157 @@ router.get("/confirmation/:orderId", requireLogin, async (req, res) => {
   res.render("order-confirmations", { title: "Order Confirmation", order });
 });
 
+router.get("/checkout", requireLogin, async (req, res) => {
+  try {
+    const db = req.app.locals.client.db(req.app.locals.dbName);
+    const userId = req.session.user.userId;
 
-// POST /orders/checkout – create a new order
+    // Parse selected items
+    const itemsRaw = req.query.items;
+    if (!itemsRaw) return res.redirect("/cart");
+
+    const selectedItems = JSON.parse(itemsRaw); // [{ productId, quantity }]
+
+    // Convert productIds to ObjectId
+    const productObjectIds = selectedItems.map(i => new ObjectId(i.productId));
+
+    // Fetch product details by _id
+    const products = await db.collection("products")
+      .find({ _id: { $in: productObjectIds } })
+      .toArray();
+
+    // Merge product details with quantities
+    const finalItems = selectedItems.map(sel => {
+      const prod = products.find(p => p._id.toString() === sel.productId);
+
+      if (!prod) {
+        console.error("Product not found:", sel.productId);
+        return null;
+      }
+
+      return {
+        productId: sel.productId,
+        name: prod.name,
+        price: prod.price,
+        quantity: sel.quantity,
+        subtotal: prod.price * sel.quantity
+      };
+    }).filter(Boolean);
+
+    const totalAmount = finalItems.reduce((sum, i) => sum + i.subtotal, 0);
+
+    // Load user info
+    const user = await db.collection("users").findOne({ userId });
+
+    res.render("checkout", {
+      title: "Checkout",
+      items: finalItems,
+      totalAmount,
+      user,
+      address: user.address || "",
+      contactNumber: user.contactNumber || ""
+    });
+
+  } catch (err) {
+    console.error("Error loading checkout:", err);
+    res.status(500).send("Error loading checkout page");
+  }
+});
+
+
+// POST /orders/checkout – create a new order (partial checkout supported)
 router.post("/checkout", requireLogin, async (req, res) => {
   try {
     const db = req.app.locals.client.db(req.app.locals.dbName);
+    const usersCollection = db.collection("users");
     const productsCollection = db.collection("products");
     const ordersCollection = db.collection("orders");
-    const user = req.session.user;
+    const { payment, address, phoneNumber } = req.body;
 
-    // Use items from body OR session cart
-    const itemsFromClient = req.body.items ? JSON.parse(req.body.items) : req.session.cart || [];
-    if (!Array.isArray(itemsFromClient) || itemsFromClient.length === 0) {
-      return res.status(400).send("No items provided for checkout.");
+    // Validate address, phone number, and payment method
+    if (!address || address.trim() === "") {
+      return res.status(400).send("Please provide a delivery address.");
     }
 
-    const productIds = itemsFromClient.map(item => new ObjectId(item.productId));
+    if (!phoneNumber || phoneNumber.trim() === "") {
+      return res.status(400).send("Please provide a phone number.");
+    }
+
+    if (payment !== "cod" && payment !== "cop") {
+      return res.status(400).send("Invalid payment method. Please choose COD or COP.");
+    }
+
+    const user = await usersCollection.findOne({ userId: req.session.user.userId });
+    if (!user) return res.status(404).send("User not found.");
+
+    // Items submitted for checkout (from the form)
+    const selectedItems = req.body.items ? JSON.parse(req.body.items) : [];
+    if (!selectedItems.length) return res.status(400).send("No items selected for checkout.");
+
+    // Fetch product details for the selected items
+    const productIds = selectedItems.map(item => new ObjectId(item.productId));
     const products = await productsCollection.find({ _id: { $in: productIds } }).toArray();
 
-    const orderItems = itemsFromClient.map((item, idx) => {
-      const product = products.find(p => p._id.equals(productIds[idx]));
-      const quantity = parseInt(item.quantity, 10) || 1;
-      const price = product ? Number(product.price) : 0;
-      const subtotal = price * quantity;
+    // Build order items and calculate total
+    let totalAmount = 0;
+    const orderItems = selectedItems.map(sel => {
+      const product = products.find(p => p._id.equals(sel.productId));
+      if (!product) return null;
+
+      const quantity = parseInt(sel.quantity, 10) || 1;
+      const subtotal = product.price * quantity;
+      totalAmount += subtotal;
 
       return {
-        productId: productIds[idx],
-        name: product?.name || "Unknown",
-        price,
+        productId: product._id,
+        name: product.name,
+        price: product.price,
         quantity,
         subtotal
       };
-    });
+    }).filter(Boolean);
 
-    const totalAmount = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-    const now = new Date();
+    if (!orderItems.length) return res.status(400).send("Selected items not found in products.");
 
+    // Add to newOrder
     const newOrder = {
-      orderId: require("uuid").v4(),
+      orderId: uuidv4(),
       userId: user.userId,
       userEmail: user.email,
       items: orderItems,
       totalAmount,
       orderStatus: "to_pay",
-      createdAt: now,
-      updatedAt: now
+      paymentMethod: payment,
+      deliveryAddress: address || user.address || "",
+      phoneNumber: phoneNumber || user.contactNumber || "",
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     await ordersCollection.insertOne(newOrder);
 
-    // Clear cart after checkout
-    req.session.cart = [];
+    // Remove purchased items from user's cart in DB
+    const remainingCart = user.cart.filter(
+      c => !selectedItems.some(sel => sel.productId === c.productId)
+    );
+    await usersCollection.updateOne(
+      { userId: user.userId },
+      { $set: { cart: remainingCart } }
+    );
+
+    // Update session cart as well
+    req.session.cart = remainingCart;
     req.session.save(() => {
       res.redirect(`/orders/confirmation/${newOrder.orderId}`);
     });
+
   } catch (err) {
     console.error("Error during checkout:", err);
     res.status(500).send("Error placing order.");
   }
 });
+
+
+
 
 module.exports = router;
