@@ -74,13 +74,23 @@ router.post('/register', async (req, res) => {
 
     const verifyUrl = `${process.env.BASE_URL}/users/verify/${verificationToken}`;
 
-    // Send verification email
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL,
+    const emailResult = await resend.emails.send({
+      from: "no-reply@nemyscollectibles.shop",
       to: email,
       subject: "Verify Your Email",
-      html: `<h2>Welcome, ${firstName}!</h2><p>Please verify your email:</p><a href="${verifyUrl}">${verifyUrl}</a>`
+      html: `
+        <h2>Welcome, ${firstName}!</h2>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verifyUrl}">${verifyUrl}</a>
+      `
     });
+
+    console.log("Resend response:", emailResult);
+
+    if (emailResult.error) {
+      console.error("Resend send failed:", emailResult.error);
+    }
+
 
     res.render('register', {
       title: "Register",
